@@ -159,6 +159,16 @@
                 <span data-i18n="tab_market">Market / Прайс</span>
                 <span class="nav-tab-badge" data-i18n="tab_pro_badge">PRO</span>
             </button>
+            <!-- P/F Library tab -->
+            <button class="nav-tab" data-tab="pf-library" onclick="switchTab('pf-library')" role="tab"
+                aria-selected="false" aria-controls="pfPanel">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                </svg>
+                <span data-i18n="tab_pf_library">P/F Library</span>
+                <span class="nav-tab-badge nav-tab-badge-gold" id="pfTabCount" style="display:none">0</span>
+            </button>
         </div>
         <!-- Tier status pill — visible in tab bar -->
         <div class="tab-nav-right no-print" id="tierStatusRow">
@@ -414,6 +424,84 @@
                 </button>
             </div>
         </div>
+    </section>
+
+    <!-- ═══════════════════ P/F LIBRARY PANEL ═══════════════════ -->
+    <section id="pfPanel" class="pf-panel no-print" style="display:none" aria-label="Semi-finished products library"
+        role="region">
+
+        <div class="pf-panel-header">
+            <div class="pf-panel-header-left">
+                <h2 class="pf-panel-title">
+                    <span class="pf-panel-title-icon" aria-hidden="true">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                        </svg>
+                    </span>
+                    <span data-i18n="pf_library_title">P/F Library</span>
+                </h2>
+                <p class="pf-panel-subtitle" data-i18n="pf_library_subtitle">
+                    All your semi-finished products with live cost-per-kg
+                </p>
+            </div>
+            <button class="btn-new-pf" onclick="createNewPF()" aria-label="Create new P/F">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span data-i18n="btn_new_pf">New P/F</span>
+            </button>
+        </div>
+
+        <!-- Stats bar -->
+        <div class="pf-stats-bar" id="pfStatsBar">
+            <div class="pf-stat">
+                <span class="pf-stat-label" data-i18n="pf_stat_count">Total P/F</span>
+                <span class="pf-stat-value" id="pfStatCount">0</span>
+            </div>
+            <div class="pf-stat">
+                <span class="pf-stat-label" data-i18n="pf_stat_avg_cost">Avg Cost/kg</span>
+                <span class="pf-stat-value" id="pfStatAvgCost">—</span>
+            </div>
+            <div class="pf-stat">
+                <span class="pf-stat-label" data-i18n="pf_stat_used_in">Used in Recipes</span>
+                <span class="pf-stat-value" id="pfStatUsed">0</span>
+            </div>
+        </div>
+
+        <!-- Search -->
+        <div class="pf-search-wrap">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input id="pfSearch" class="pf-search-input" type="text" data-i18n-ph="pf_search_ph"
+                placeholder="Search P/F products…" oninput="filterPFLibrary(this.value)" autocomplete="off" />
+        </div>
+
+        <!-- P/F cards -->
+        <div id="pfCardGrid" class="pf-cards-grid" role="list" aria-live="polite"></div>
+
+        <!-- Empty state -->
+        <div id="pfEmptyState" class="pf-empty-state" style="display:none">
+            <div class="pf-empty-icon" aria-hidden="true">⭐</div>
+            <p class="pf-empty-title" data-i18n="pf_empty_title">No P/F products yet</p>
+            <p class="pf-empty-desc" data-i18n="pf_empty_desc">
+                Create a recipe, toggle the P/F switch, and save it.<br>
+                It will appear here with its live cost-per-kg.
+            </p>
+            <button class="btn-new-pf" onclick="createNewPF()">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19" />
+                    <line x1="5" y1="12" x2="19" y2="12" />
+                </svg>
+                <span data-i18n="btn_new_pf">New P/F</span>
+            </button>
+        </div>
+
     </section>
 
     <!-- ═══════════════════ FLOATING AI BUTTON ═══════════════════ -->

@@ -57,10 +57,29 @@ body {
     color: var(--text);
     min-height: 100vh;
     min-height: 100dvh;
-    padding-top: var(--topbar-h);
+    padding-top: calc(var(--topbar-h) + 46px);
+    /* topbar + tab nav */
     padding-bottom: 96px;
     -webkit-font-smoothing: antialiased;
     overflow-x: hidden;
+    max-width: 100vw;
+    word-break: break-word;
+}
+
+/* Global mobile safeguard: nothing overflows the viewport */
+*,
+*::before,
+*::after {
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+/* Scrollable containers can still scroll internally */
+.autocomplete-list,
+.ai-messages,
+.market-list,
+.pro-modal {
+    max-width: none;
 }
 
 /* ═══ TOPBAR ═════════════════════════════════════════════════ */
@@ -2442,6 +2461,14 @@ body {
     text-transform: uppercase;
 }
 
+.nav-tab-badge-gold {
+    background: rgba(245, 158, 11, 0.2);
+    border-color: rgba(245, 158, 11, 0.45);
+    font-size: .65rem;
+    min-width: 18px;
+    text-align: center;
+}
+
 /* Right side of tab bar */
 .tab-nav-right {
     display: flex;
@@ -3005,6 +3032,813 @@ body {
     font-size: .82rem;
 }
 
+
+
+
+/* ═══════════════════════════════════════════════════════════════
+   P/F LIBRARY PANEL
+   ═══════════════════════════════════════════════════════════════ */
+.pf-panel {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: var(--gap) var(--page-pad) 80px;
+    position: relative;
+}
+
+/* Panel header */
+.pf-panel-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.pf-panel-header-left {}
+
+.pf-panel-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.2rem;
+    color: var(--text);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.pf-panel-title-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--gold);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.pf-panel-subtitle {
+    font-size: .82rem;
+    color: var(--muted);
+}
+
+/* Empty state */
+.pf-empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--muted);
+}
+
+.pf-empty-icon {
+    font-size: 2.5rem;
+    margin-bottom: 14px;
+}
+
+.pf-empty-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: var(--soft);
+    margin-bottom: 6px;
+}
+
+.pf-empty-desc {
+    font-size: .85rem;
+    line-height: 1.6;
+    margin-bottom: 18px;
+}
+
+/* Stats bar */
+.pf-stats-bar {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.pf-stat {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--r-md);
+    padding: 10px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 110px;
+}
+
+.pf-stat-label {
+    font-size: .65rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.pf-stat-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 1.1rem;
+    color: var(--gold);
+}
+
+/* Cards grid */
+.pf-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 14px;
+}
+
+@media(max-width:479px) {
+    .pf-cards-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Individual P/F card */
+.pf-card {
+    background: var(--card);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: var(--r-xl);
+    padding: 18px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color .2s, box-shadow .2s;
+    animation: cardIn .35s ease both;
+}
+
+.pf-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    transform: scaleX(0);
+    transition: transform .3s;
+}
+
+.pf-card:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 20px rgba(245, 158, 11, 0.08);
+}
+
+.pf-card:hover::before {
+    transform: scaleX(1);
+}
+
+.pf-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.pf-card-title {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: .95rem;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+}
+
+.pf-card-title span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pf-card-badge {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: .6rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 5px;
+    flex-shrink: 0;
+    background: rgba(245, 158, 11, 0.15);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    color: var(--gold);
+}
+
+.pf-card-actions {
+    display: flex;
+    gap: 5px;
+    flex-shrink: 0;
+}
+
+.pf-action-btn {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 1px solid var(--border-md);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--muted);
+    transition: var(--transition);
+    padding: 0;
+}
+
+.pf-action-btn.edit:hover {
+    border-color: var(--lime-border);
+    color: var(--lime);
+    background: var(--lime-faint);
+}
+
+.pf-action-btn.del:hover {
+    border-color: rgba(239, 68, 68, .4);
+    color: var(--danger);
+    background: rgba(239, 68, 68, .07);
+}
+
+/* Metrics row */
+.pf-card-metrics {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.pf-metric {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid var(--border);
+    border-radius: var(--r-sm);
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.pf-metric-label {
+    font-size: .6rem;
+    font-weight: 700;
+    color: var(--muted);
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    margin-bottom: 3px;
+}
+
+.pf-metric-value {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    color: var(--text);
+}
+
+.pf-metric-value.gold {
+    color: var(--gold);
+}
+
+/* Ingredient preview list */
+.pf-ing-preview {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 12px;
+    max-height: 120px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, .1) transparent;
+}
+
+.pf-ing-preview-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: .78rem;
+    color: var(--soft);
+    padding: 2px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .04);
+}
+
+.pf-ing-preview-item:last-child {
+    border-bottom: none;
+}
+
+.pf-ing-preview-item .pf-ing-name {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.pf-ing-preview-item .pf-ing-cost {
+    color: var(--lime);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .75rem;
+    white-space: nowrap;
+    margin-left: 8px;
+}
+
+/* Supplier chip in card footer */
+.pf-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 10px;
+    border-top: 1px solid var(--border);
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pf-supplier-chip {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .62rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 5px;
+    background: rgba(46, 204, 113, 0.1);
+    border: 1px solid rgba(46, 204, 113, 0.25);
+    color: var(--lime);
+}
+
+.pf-date {
+    font-size: .68rem;
+    color: var(--muted);
+}
+
+/* Search bar in P/F panel */
+.pf-search-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.pf-search-wrap svg {
+    position: absolute;
+    left: 10px;
+    color: var(--muted);
+    pointer-events: none;
+}
+
+.pf-search-input {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid var(--border-md);
+    border-radius: var(--r-md);
+    padding: 10px 12px 10px 34px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: .88rem;
+    outline: none;
+    transition: var(--transition);
+    min-height: 44px;
+    width: 100%;
+}
+
+.pf-search-input:focus {
+    border-color: var(--lime);
+    box-shadow: var(--shadow-focus);
+}
+
+.pf-search-input::placeholder {
+    color: var(--muted);
+}
+
+/* New P/F button */
+.btn-new-pf {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    background: rgba(245, 158, 11, 0.12);
+    border: 1.5px solid rgba(245, 158, 11, 0.3);
+    color: var(--gold);
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    padding: 10px 18px;
+    border-radius: var(--r-md);
+    cursor: pointer;
+    transition: var(--transition);
+    min-height: 44px;
+}
+
+.btn-new-pf:hover {
+    background: rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, .2);
+}
+
+
+/* ── P/F toggle visibility on all screens ── */
+.pf-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    cursor: pointer;
+    user-select: none;
+    background: rgba(245, 158, 11, 0.06);
+    border: 1px solid rgba(245, 158, 11, 0.2);
+    border-radius: 8px;
+    padding: 5px 10px;
+    transition: var(--transition);
+    min-height: 36px;
+}
+
+.pf-toggle:hover {
+    background: rgba(245, 158, 11, 0.12);
+    border-color: rgba(245, 158, 11, 0.4);
+}
+
+.pf-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.pf-badge {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: .68rem;
+    padding: 3px 9px;
+    border-radius: 6px;
+    letter-spacing: .06em;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1.5px solid var(--border-md);
+    color: var(--muted);
+    transition: var(--transition);
+}
+
+.pf-toggle input:checked~.pf-badge {
+    background: rgba(245, 158, 11, 0.18);
+    border-color: rgba(245, 158, 11, 0.5);
+    color: var(--gold);
+    box-shadow: 0 0 8px rgba(245, 158, 11, 0.2);
+}
+
+.pf-label {
+    font-size: .75rem;
+    color: var(--muted);
+    transition: var(--transition);
+    font-weight: 500;
+}
+
+.pf-toggle input:checked~.pf-badge~.pf-label {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+@media(max-width:479px) {
+    .card-label-row {
+        flex-wrap: wrap;
+    }
+
+    .pf-toggle {
+        margin-top: 2px;
+    }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE-FIRST RESPONSIVE SYSTEM  (zero horizontal scroll)
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── Topbar mobile refinements ── */
+@media(max-width:479px) {
+    .topbar-inner {
+        padding: 0 10px;
+        gap: 6px;
+    }
+
+    .logo-text {
+        font-size: .9rem;
+    }
+
+    .currency-badge {
+        display: none;
+    }
+
+    #upgradeBtnDesktop {
+        display: none;
+    }
+
+    .tab-nav {
+        padding: 0 8px;
+    }
+
+    .tab-nav-right {
+        display: none;
+    }
+
+    .nav-tab {
+        padding: 7px 10px;
+        font-size: .72rem;
+        gap: 4px;
+    }
+
+    .nav-tab svg {
+        display: none;
+    }
+
+    .nav-tab-badge {
+        display: none;
+    }
+}
+
+/* ── Main grid mobile ── */
+@media(max-width:479px) {
+    .main-grid {
+        padding: 8px 8px 0;
+        gap: 8px;
+    }
+
+    .dl-card {
+        padding: 14px 12px;
+        border-radius: 14px;
+    }
+
+    .meta-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .field-group.span-2 {
+        grid-column: 1;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .res-val {
+        font-size: 1.1rem;
+    }
+
+    .action-row {
+        flex-direction: column;
+    }
+
+    .action-row .btn-lime,
+    .action-row .btn-ghost {
+        flex: none;
+        width: 100%;
+    }
+}
+
+/* ── Ingredient rows: mobile card layout ─────────────────────
+   Each ingredient becomes a self-contained card on small screens
+   ──────────────────────────────────────────────────────────── */
+@media(max-width:699px) {
+
+    /* Desktop grid header hidden — already done, reinforce */
+    .ing-header {
+        display: none !important;
+    }
+
+    /* Hide desktop rows, show mobile cards */
+    .ing-row-desktop {
+        display: none !important;
+    }
+
+    .ing-row-mobile {
+        display: flex !important;
+    }
+
+    /* Card styling */
+    .ing-row-mobile {
+        background: rgba(255, 255, 255, 0.025);
+        border: 1px solid var(--border);
+        border-radius: var(--r-md);
+        padding: 12px;
+        margin-bottom: 8px;
+        flex-direction: column;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .ing-row-mobile:last-of-type {
+        margin-bottom: 0;
+    }
+
+    .ing-row-pf.ing-row-mobile {
+        border-left: 3px solid var(--gold);
+    }
+
+    /* Name row: full width */
+    .mob-row-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+    }
+
+    .mob-row-name-wrap {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* 3-col grid for amount/unit/waste */
+    .mob-row-grid-3 {
+        display: grid;
+        grid-template-columns: 1fr 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+
+    /* 2-col grid for price/cost */
+    .mob-row-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+    }
+
+    /* Inputs in mobile card — ensure touch target */
+    .ing-row-mobile .ing-input,
+    .ing-row-mobile .unit-sel {
+        min-height: 44px;
+        font-size: .9rem;
+        padding: 10px 10px;
+    }
+
+    .ing-row-mobile .dl-input {
+        min-height: 44px;
+    }
+
+    /* Cost display cell */
+    .ing-cost-display {
+        min-height: 44px;
+        font-size: .9rem;
+        padding: 10px;
+    }
+
+    /* P/F badge inside mobile row */
+    .ing-row-mobile .pf-ing-badge {
+        font-size: .55rem;
+        padding: 1px 5px;
+    }
+}
+
+/* ── Extra-small: 360px and below ── */
+@media(max-width:369px) {
+    .mob-row-grid-3 {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .results-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .markup-presets {
+        gap: 4px;
+    }
+
+    .mp {
+        padding: 5px 10px;
+        font-size: .7rem;
+        min-height: 40px;
+    }
+}
+
+/* ── AI chat window mobile ── */
+@media(max-width:479px) {
+    .ai-chat-window {
+        bottom: max(80px, calc(env(safe-area-inset-bottom, 0px)+80px));
+        right: 8px;
+        left: 8px;
+        width: auto;
+    }
+
+    .ai-quick-btns {
+        gap: 4px;
+    }
+
+    .ai-quick-btn {
+        padding: 5px 9px;
+        font-size: .7rem;
+    }
+}
+
+/* ── PRO modal mobile ── */
+@media(max-width:599px) {
+    .pro-modal {
+        padding: 20px 16px;
+        border-radius: 16px;
+    }
+
+    .pro-tiers {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .pro-tier-featured .pro-tier-popular {
+        position: static;
+        transform: none;
+        display: inline-block;
+        margin-bottom: 6px;
+    }
+}
+
+/* ── Market panel mobile ── */
+@media(max-width:599px) {
+    .market-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .market-header-right {
+        justify-content: space-between;
+    }
+
+    .market-search-input {
+        width: 100%;
+    }
+
+    .market-col-header {
+        display: none;
+    }
+
+    .market-row {
+        grid-template-columns: 1fr 1fr;
+        row-gap: 6px;
+    }
+
+    .market-row-name {
+        grid-column: 1/-1;
+    }
+}
+
+/* ── P/F Library panel mobile ── */
+@media(max-width:479px) {
+    .pf-panel {
+        padding: 8px 8px 80px;
+    }
+
+    .pf-card {
+        padding: 12px;
+    }
+
+    .pf-card-header {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .pf-card-actions {
+        flex-shrink: 0;
+    }
+}
+
+/* ── Touch targets — global enforcement ── */
+button,
+[role="button"],
+input,
+select,
+.nav-tab,
+.lb,
+.ai-quick-btn {
+    min-height: 44px;
+}
+
+/* Exceptions for small decorative elements */
+.rm-btn,
+.ai-chat-close,
+.voice-stop-btn,
+.modal-close,
+.pf-ing-badge,
+.pf-tag-sm,
+.tier-badge,
+.saved-count,
+.nav-tab-badge,
+.pf-count-badge,
+.supplier-chip {
+    min-height: unset;
+}
+
+/* ── Scrollable containers don't cause body overflow ── */
+.ai-messages,
+.market-list,
+.saved-list,
+.pro-modal,
+.autocomplete-list,
+#ingredientsDiv {
+    overscroll-behavior: contain;
+}
+
+/* ── Fix: tab nav on narrow screens ── */
+.tab-nav {
+    flex-wrap: wrap;
+    min-height: 46px;
+}
+
+.tab-nav-inner {
+    flex: 1;
+}
 
 .print-only {
     display: none;

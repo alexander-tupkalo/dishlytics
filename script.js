@@ -192,6 +192,23 @@ const TRANSLATIONS = {
     fc_label:'Food cost:', print_tagline:'Technical Recipe Card',
     /* ── Tabs ── */
     tab_calculator:'Calculator',
+    tab_pf_library:'P/F Library',
+    pf_library_title:'P/F Library',
+    pf_library_subtitle:'All your semi-finished products with live cost-per-kg',
+    btn_new_pf:'New P/F',
+    btn_edit_pf:'Edit',
+    pf_cost_per_kg:'Cost/kg',
+    pf_used_in:'Used in',
+    pf_recipes:'recipes',
+    pf_stat_count:'Total P/F',
+    pf_stat_avg_cost:'Avg Cost/kg',
+    pf_stat_used_in:'Used in Recipes',
+    pf_search_ph:'Search P/F products…',
+    pf_empty_title:'No P/F products yet',
+    pf_empty_desc:'Create a recipe, toggle the P/F switch, and save it.\nIt will appear here with its live cost-per-kg.',
+    pf_saved_ok:'P/F saved!',
+    toast_pf_create:'⭐ P/F mode active — fill in your sub-recipe',
+    toast_pf_edit:'✏️ Editing P/F — save when done',
     tab_market:'Market / Прайс',
     tab_pro_badge:'PRO',
     /* ── Market ── */
@@ -353,6 +370,40 @@ const TRANSLATIONS = {
     msg_no_ing:'Добавьте хотя бы один ингредиент.',
     fc_label:'Доля продуктов:', print_tagline:'Технологическая карта',
     tab_calculator:'Калькулятор',
+    tab_pf_library:'Бібліотека П/Ф',
+    pf_library_title:'Бібліотека П/Ф',
+    pf_library_subtitle:'Усі ваші напівфабрикати з актуальною собівартістю за кг',
+    btn_new_pf:'Новий П/Ф',
+    btn_edit_pf:'Редагувати',
+    pf_cost_per_kg:'Собівартість/кг',
+    pf_used_in:'Використовується в',
+    pf_recipes:'рецепт(ах)',
+    pf_stat_count:'Всього П/Ф',
+    pf_stat_avg_cost:'Середня вартість/кг',
+    pf_stat_used_in:'Використовується в рецептах',
+    pf_search_ph:'Пошук П/Ф…',
+    pf_empty_title:'Немає напівфабрикатів',
+    pf_empty_desc:'Створіть рецепт, увімкніть перемикач П/Ф і збережіть.',
+    pf_saved_ok:'П/Ф збережено!',
+    toast_pf_create:'⭐ Режим П/Ф активний — заповніть рецепт напівфабрикату',
+    toast_pf_edit:'✏️ Редагування П/Ф — збережіть після змін',
+    tab_pf_library:'Библиотека П/Ф',
+    pf_library_title:'Библиотека П/Ф',
+    pf_library_subtitle:'Все ваши полуфабрикаты с актуальной себестоимостью за кг',
+    btn_new_pf:'Новый П/Ф',
+    btn_edit_pf:'Редактировать',
+    pf_cost_per_kg:'Себест./кг',
+    pf_used_in:'Используется в',
+    pf_recipes:'рецепт(ах)',
+    pf_stat_count:'Всего П/Ф',
+    pf_stat_avg_cost:'Средняя стоимость/кг',
+    pf_stat_used_in:'Используется в рецептах',
+    pf_search_ph:'Поиск П/Ф…',
+    pf_empty_title:'Нет полуфабрикатов',
+    pf_empty_desc:'Создайте рецепт, включите переключатель П/Ф и сохраните.',
+    pf_saved_ok:'П/Ф сохранён!',
+    toast_pf_create:'⭐ Режим П/Ф активен — заполните рецепт полуфабриката',
+    toast_pf_edit:'✏️ Редактирование П/Ф — сохраните после изменений',
     tab_market:'Маркет / Прайс',
     tab_pro_badge:'PRO',
     market_title:'Маркет / Прайс-лист',
@@ -1283,12 +1334,25 @@ function getFormData(){
 }
 
 function saveDish(){
-  const data=getFormData();
+  let data=getFormData();
   if(!data.ingredients.length){showToast(t('msg_no_ing'),'danger');return}
+  // Auto-set supplier + defaults for P/F items
+  data = applyPFDefaults(data);
   const dishes=loadDB();
   const idx=dishes.findIndex(d=>d.name===data.name&&data.name!=='');
   if(idx>-1)dishes[idx]=data;else dishes.push(data);
-  saveDB(dishes);renderSaved();showToast('💾 '+t('msg_saved_ok'),'lime');
+  saveDB(dishes);
+  renderSaved();
+  // Also refresh PF library and tab badge
+  const tabBadge = document.getElementById('pfTabCount');
+  const pfCount = loadDB().filter(d=>d.isPF).length;
+  if (tabBadge) {
+    tabBadge.textContent = pfCount;
+    tabBadge.style.display = pfCount > 0 ? 'inline-block' : 'none';
+  }
+  if (activeTab === 'pf-library') renderPFLibrary();
+  const isSavedPF = data.isPF;
+  showToast(isSavedPF ? '⭐ '+t('pf_saved_ok')||'⭐ P/F saved!' : '💾 '+t('msg_saved_ok'), 'lime');
 }
 
 function loadDish(index){
@@ -1351,6 +1415,12 @@ function renderSaved(){
     } else {
       pfCounter.style.display = 'none';
     }
+  }
+  // Sync the tab nav badge
+  const tabBadge = document.getElementById('pfTabCount');
+  if(tabBadge){
+    tabBadge.textContent = pfDishes.length;
+    tabBadge.style.display = pfDishes.length > 0 ? 'inline-block' : 'none';
   }
 
   if(!dishes.length){
@@ -2135,27 +2205,37 @@ let activeTab = 'calculator';
 function switchTab(tab) {
   activeTab = tab;
 
-  // Toggle panels
-  const calc   = document.getElementById('mainContent');
-  const market = document.getElementById('marketPanel');
-  if (calc)   calc.style.display   = tab === 'calculator' ? '' : 'none';
-  if (market) market.style.display = tab === 'market'     ? '' : 'none';
-
-  // Update tab button states
-  document.querySelectorAll('.nav-tab').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.tab === tab);
-    btn.setAttribute('aria-selected', btn.dataset.tab === tab);
+  // All panels — hide, then show the right one
+  const panels = {
+    calculator:  document.getElementById('mainContent'),
+    market:      document.getElementById('marketPanel'),
+    'pf-library':document.getElementById('pfPanel'),
+  };
+  Object.entries(panels).forEach(([key, el]) => {
+    if (el) el.style.display = key === tab ? '' : 'none';
   });
 
+  // Update tab button ARIA states
+  document.querySelectorAll('.nav-tab').forEach(btn => {
+    const isActive = btn.dataset.tab === tab;
+    btn.classList.toggle('active', isActive);
+    btn.setAttribute('aria-selected', String(isActive));
+  });
+
+  // Tab-specific logic
   if (tab === 'market') {
     const gate = document.getElementById('marketGate');
     if (!checkFeatureAccess('market_price_sync')) {
-      // Show gate overlay instead of reverting (better UX — user sees what they're missing)
       if (gate) gate.style.display = 'flex';
     } else {
       if (gate) gate.style.display = 'none';
       renderMarket();
     }
+  } else if (tab === 'pf-library') {
+    renderPFLibrary();
+    // Clear any stale search
+    const search = document.getElementById('pfSearch');
+    if (search) search.value = '';
   }
 }
 
@@ -2342,6 +2422,224 @@ function saveAllMarketPrices() {
   });
   setTimeout(renderMarket, 200);
   document.getElementById('marketSaveBtn').style.display = 'none';
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ★  P/F LIBRARY  — Full CRUD, Stats, Rendering
+   ══════════════════════════════════════════════════════════════════
+   DEFAULT SUPPLIER for all P/F items: 'In-house / Власне виробництво'
+   ══════════════════════════════════════════════════════════════════ */
+
+const PF_DEFAULT_SUPPLIER = 'In-house / Власне виробництво';
+
+/* ─────────────────────────────────────────────────────────────
+   renderPFLibrary()
+   Build the full P/F card grid from localStorage.
+   ───────────────────────────────────────────────────────────── */
+function renderPFLibrary() {
+  const allDishes = loadDB();
+  const pfDishes  = allDishes.filter(d => d.isPF && d.name);
+
+  const grid    = document.getElementById('pfCardGrid');
+  const empty   = document.getElementById('pfEmptyState');
+  const statCount = document.getElementById('pfStatCount');
+  const statAvg   = document.getElementById('pfStatAvgCost');
+  const statUsed  = document.getElementById('pfStatUsed');
+  const tabBadge  = document.getElementById('pfTabCount');
+
+  // Tab badge
+  if (tabBadge) {
+    tabBadge.textContent = pfDishes.length;
+    tabBadge.style.display = pfDishes.length > 0 ? 'inline-block' : 'none';
+  }
+
+  if (!pfDishes.length) {
+    if (grid)  grid.innerHTML  = '';
+    if (empty) empty.style.display = 'block';
+    if (statCount) statCount.textContent = '0';
+    if (statAvg)   statAvg.textContent   = '—';
+    if (statUsed)  statUsed.textContent  = '0';
+    return;
+  }
+
+  if (empty) empty.style.display = 'none';
+
+  // ── Stats ──────────────────────────────────────────────────
+  const costs = pfDishes.map(d => calcPFCostPerKg(d));
+  const avgCost = costs.reduce((a,b) => a+b, 0) / costs.length;
+
+  // Count how many non-PF recipes use at least one P/F
+  const pfNames = new Set(pfDishes.map(d => d.name.toLowerCase().trim()));
+  const usedInCount = allDishes.filter(d =>
+    !d.isPF && (d.ingredients||[]).some(i => pfNames.has((i.name||'').toLowerCase().trim()))
+  ).length;
+
+  if (statCount) statCount.textContent = pfDishes.length;
+  if (statAvg)   statAvg.textContent   = fmt(avgCost) + '/kg';
+  if (statUsed)  statUsed.textContent  = usedInCount;
+
+  // ── Cards ──────────────────────────────────────────────────
+  const s  = sym();
+  const catMap = {
+    starter:t('cat_starter'), main:t('cat_main'),
+    dessert:t('cat_dessert'), drink:t('cat_drink'), other:t('cat_other'),
+  };
+
+  if (grid) {
+    grid.innerHTML = pfDishes.map((d, localIdx) => {
+      const globalIdx = allDishes.indexOf(d);
+      const costPerKg = calcPFCostPerKg(d);
+      const yieldG    = parseFloat(d.output) || 1000;
+      const ingCount  = (d.ingredients||[]).length;
+      const date      = d.savedAt ? new Date(d.savedAt).toLocaleDateString() : '';
+      const supplier  = d.supplier || PF_DEFAULT_SUPPLIER;
+
+      // How many recipes reference this P/F
+      const pfKey = d.name.toLowerCase().trim();
+      const linkedCount = allDishes.filter(dd =>
+        !dd.isPF && (dd.ingredients||[]).some(i => (i.name||'').toLowerCase().trim() === pfKey)
+      ).length;
+
+      // Ingredient preview (up to 4 items)
+      const previewIng = (d.ingredients||[]).slice(0,4);
+      const ingPreviewHtml = previewIng.map(ing => {
+        const unitPrice = parseFloat(ing.price) || 0;
+        const cost = calcIngCost(unitPrice, parseFloat(ing.amount)||0, ing.unit||'g', parseFloat(ing.waste)||0);
+        return `<div class="pf-ing-preview-item">
+          <span class="pf-ing-name">${esc(ing.name||'—')}</span>
+          <span class="pf-ing-cost">${cost>0?fmt(cost):'—'}</span>
+        </div>`;
+      }).join('');
+
+      const moreCount = (d.ingredients||[]).length - previewIng.length;
+      const moreHtml = moreCount > 0
+        ? `<div style="font-size:.72rem;color:var(--muted);padding-top:2px">+${moreCount} more…</div>`
+        : '';
+
+      return `<div class="pf-card" role="listitem" data-pf-name="${esc(d.name)}" id="pfCard-${globalIdx}">
+        <div class="pf-card-header">
+          <div class="pf-card-title">
+            <span class="pf-card-badge">P/F</span>
+            <span title="${esc(d.name)}">${esc(d.name)}</span>
+          </div>
+          <div class="pf-card-actions">
+            <button class="pf-action-btn edit"
+              onclick="editPF(${globalIdx})"
+              aria-label="Edit ${esc(d.name)}" title="${t('btn_edit_pf')||'Edit'}">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            </button>
+            <button class="pf-action-btn del"
+              onclick="deletePF(${globalIdx})"
+              aria-label="Delete ${esc(d.name)}" title="${t('msg_deleted')||'Delete'}">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Metrics -->
+        <div class="pf-card-metrics">
+          <div class="pf-metric">
+            <div class="pf-metric-label">${t('pf_cost_per_kg')||'Cost/kg'}</div>
+            <div class="pf-metric-value gold">${s}${costPerKg.toFixed(2)}</div>
+          </div>
+          <div class="pf-metric">
+            <div class="pf-metric-label">${t('label_output')||'Yield'}</div>
+            <div class="pf-metric-value">${yieldG}g</div>
+          </div>
+          <div class="pf-metric">
+            <div class="pf-metric-label">${t('pf_used_in')||'Used in'}</div>
+            <div class="pf-metric-value">${linkedCount} ${t('pf_recipes')||'recipes'}</div>
+          </div>
+        </div>
+
+        <!-- Ingredient preview -->
+        <div class="pf-ing-preview">${ingPreviewHtml}${moreHtml}</div>
+
+        <!-- Footer: supplier + date -->
+        <div class="pf-card-footer">
+          <span class="pf-supplier-chip">${esc(supplier)}</span>
+          <span class="pf-date">${date}</span>
+        </div>
+      </div>`;
+    }).join('');
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   filterPFLibrary(query)  — client-side search
+   ───────────────────────────────────────────────────────────── */
+function filterPFLibrary(query) {
+  const q = query.toLowerCase().trim();
+  document.querySelectorAll('.pf-card').forEach(card => {
+    const name = (card.dataset.pfName || '').toLowerCase();
+    const ingText = card.querySelector('.pf-ing-preview')?.textContent.toLowerCase() || '';
+    card.style.display = (!q || name.includes(q) || ingText.includes(q)) ? '' : 'none';
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────
+   createNewPF()  — switches to calculator with P/F pre-checked
+   ───────────────────────────────────────────────────────────── */
+function createNewPF() {
+  switchTab('calculator');
+  // Pre-check the P/F toggle
+  const pfCheck = document.getElementById('isPF');
+  if (pfCheck) { pfCheck.checked = true; togglePF(); }
+  // Clear form for fresh entry
+  const dishName = document.getElementById('dishName');
+  if (dishName) { dishName.value = ''; dishName.focus(); }
+  showToast(t('toast_pf_create') || '⭐ P/F mode active — fill in your sub-recipe', 'gold');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   editPF(index)  — loads the P/F into the calculator
+   ───────────────────────────────────────────────────────────── */
+function editPF(index) {
+  loadDish(index);               // loads into calculator
+  switchTab('calculator');
+  // Ensure P/F toggle is on
+  setTimeout(() => {
+    const pfCheck = document.getElementById('isPF');
+    if (pfCheck && !pfCheck.checked) { pfCheck.checked = true; togglePF(); }
+  }, 50);
+  showToast(t('toast_pf_edit') || '✏️ Editing P/F — save when done', 'gold');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   deletePF(index)  — removes P/F from storage
+   ───────────────────────────────────────────────────────────── */
+function deletePF(index) {
+  const dishes = loadDB();
+  const dish   = dishes[index];
+  if (!dish) return;
+
+  // Warn if this P/F is used in other recipes
+  const pfKey = dish.name.toLowerCase().trim();
+  const linkedCount = dishes.filter(d =>
+    !d.isPF && (d.ingredients||[]).some(i => (i.name||'').toLowerCase().trim() === pfKey)
+  ).length;
+
+  const confirmMsg = linkedCount > 0
+    ? `Delete "${dish.name}"? It is used in ${linkedCount} recipe(s). Those recipes will still keep the stored price but will no longer update automatically.`
+    : `Delete "${dish.name}"?`;
+
+  if (!confirm(confirmMsg)) return;
+
+  dishes.splice(index, 1);
+  saveDB(dishes);
+  renderSaved();
+  renderPFLibrary();
+  showToast(t('msg_deleted'), '');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   saveDish override: auto-set supplier to PF_DEFAULT_SUPPLIER
+   when isPF is true and no supplier explicitly set
+   ───────────────────────────────────────────────────────────── */
+function applyPFDefaults(data) {
+  if (!data.isPF) return data;
+  if (!data.supplier) data.supplier = PF_DEFAULT_SUPPLIER;
+  return data;
 }
 
 /* ══════════════════════════════════════════════════════════════════
