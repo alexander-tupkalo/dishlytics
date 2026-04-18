@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en" data-lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="theme-color" content="#0F172A" />
+    <title>Dishlytics • Smart Dish Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        lime: '#2ECC71', 'lime-d': '#27AE60',
+                        night: '#0F172A', card: '#1E293B', 'card-hi': '#253347',
+                        gold: '#F59E0B', 'gold-d': '#D97706',
+                    },
+                    fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+                },
+            },
+        };
+    </script>
+    <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="font-body bg-night text-slate-200 min-h-screen">
+
+    <!-- ═══════════════════════ TOPBAR ═══════════════════════ -->
+    <header id="topbar" class="topbar no-print">
+        <div class="topbar-inner">
+
+            <!-- Logo -->
+            <a href="#" class="logo-wrap" aria-label="Dishlytics home">
+                <svg width="32" height="32" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+                    <rect x="5" y="24" width="24" height="5" rx="2.5" fill="#1E293B" />
+                    <rect x="8" y="19" width="4" height="5" rx="1" fill="#2ECC71" opacity=".6" />
+                    <rect x="14" y="14" width="4" height="10" rx="1" fill="#2ECC71" opacity=".82" />
+                    <rect x="20" y="9" width="4" height="15" rx="1" fill="#2ECC71" />
+                    <ellipse cx="10" cy="18" rx="5.5" ry="5" fill="#1E293B" />
+                    <ellipse cx="17" cy="14" rx="6.5" ry="5.8" fill="#1E293B" />
+                    <ellipse cx="24" cy="18" rx="5.5" ry="5" fill="#1E293B" />
+                    <ellipse cx="17" cy="13" rx="3.5" ry="2.5" fill="rgba(46,204,113,0.15)" />
+                </svg>
+                <span class="logo-text">Dish<span>lytics</span></span>
+            </a>
+
+            <!-- Topbar right -->
+            <div class="topbar-right">
+                <div class="currency-badge" id="currencyBadge" aria-live="polite">$ USD</div>
+
+                <div class="lang-sw" role="group" aria-label="Language">
+                    <button class="lb" data-lang="en">EN</button>
+                    <button class="lb" data-lang="ru">RU</button>
+                    <button class="lb" data-lang="ua">UA</button>
+                </div>
+
+                <!-- Auth / Login button -->
+                <button class="auth-login-btn no-print" id="authLoginBtn" onclick="openLoginModal()"
+                    aria-label="Sign in / Sync">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                    </svg>
+                    <span class="auth-pill" id="authPill" data-i18n="auth_login">Free</span>
+                </button>
+
+                <!-- PRO upgrade button - desktop -->
+                <button class="btn-pro no-print" id="upgradeBtnDesktop" onclick="openProModal()"
+                    aria-label="Upgrade to PRO">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                    <span data-i18n="btn_upgrade">Upgrade to PRO</span>
+                </button>
+
+                <button class="btn-lime-sm no-print" onclick="exportPDF()" id="pdfBtn" aria-label="Export PDF">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="12" y1="18" x2="12" y2="12" />
+                        <polyline points="9 15 12 18 15 15" />
+                    </svg>
+                    <span data-i18n="btn_pdf">PDF</span>
+                </button>
+
+                <button class="mob-ham no-print" id="mobHam" onclick="toggleMobMenu()" aria-label="Menu"
+                    aria-expanded="false">
+                    <svg width="20" height="20" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        fill="none" aria-hidden="true">
+                        <line x1="3" y1="6" x2="17" y2="6" />
+                        <line x1="3" y1="12" x2="17" y2="12" />
+                        <line x1="3" y1="18" x2="17" y2="18" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile menu -->
+        <div class="mob-menu" id="mobMenu" aria-hidden="true">
+            <div class="mob-menu-inner">
+                <div class="lang-sw mob-lang" role="group">
+                    <button class="lb" data-lang="en">EN</button>
+                    <button class="lb" data-lang="ru">RU</button>
+                    <button class="lb" data-lang="ua">UA</button>
+                </div>
+                <!-- PRO upgrade - mobile -->
+                <button class="btn-pro btn-pro-mob" onclick="openProModal(); toggleMobMenu()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                    <span data-i18n="btn_upgrade">Upgrade to PRO</span>
+                </button>
+                <button class="btn-lime-sm" onclick="exportPDF(); toggleMobMenu()"
+                    style="width:100%;justify-content:center">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="12" y1="18" x2="12" y2="12" />
+                        <polyline points="9 15 12 18 15 15" />
+                    </svg>
+                    <span data-i18n="btn_pdf">Export PDF</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════ TAB NAVIGATION ═══════════════════ -->
+    <nav class="tab-nav no-print" role="tablist" aria-label="Main navigation" id="tabNav">
+        <div class="tab-nav-inner">
+            <button class="nav-tab active" data-tab="calculator" onclick="switchTab('calculator')" role="tab"
+                aria-selected="true" aria-controls="mainContent">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <rect x="4" y="2" width="16" height="20" rx="2" />
+                    <line x1="8" y1="6" x2="16" y2="6" />
+                    <line x1="8" y1="10" x2="16" y2="10" />
+                    <line x1="8" y1="14" x2="12" y2="14" />
+                </svg>
+                <span data-i18n="tab_calculator">Calculator</span>
+            </button>
+            <button class="nav-tab" data-tab="market" onclick="switchTab('market')" role="tab" aria-selected="false"
+                aria-controls="marketPanel">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+                <span data-i18n="tab_market">Market / Прайс</span>
+                <span class="nav-tab-badge" data-i18n="tab_pro_badge">PRO</span>
+            </button>
+        </div>
+        <!-- Tier status pill — visible in tab bar -->
+        <div class="tab-nav-right no-print" id="tierStatusRow">
+            <span class="tier-status-pill" id="tierBadgeText" data-i18n="tier_free_badge">Commis</span>
+            <span class="tier-limit-msg" id="tierLimitMsg" data-i18n="tier_limit_msg">5 recipes · Basic AI</span>
+        </div>
+    </nav>
+
+    <!-- ═══════════════════════ MAIN GRID ═══════════════════════ -->
+    <main class="main-grid" id="mainContent">
+
+        <!-- ── LEFT PANEL ── -->
+        <section class="panel-left" aria-label="Recipe input">
+
+            <!-- Dish meta -->
+            <div class="dl-card" id="dishMetaCard">
+                <div class="card-label-row">
+                    <h2 class="card-label" data-i18n="label_dish_info">Dish Information</h2>
+                    <!-- P/F Sub-product toggle -->
+                    <label class="pf-toggle" title="Mark as Semi-finished product (P/F)">
+                        <input type="checkbox" id="isPF" onchange="togglePF()" />
+                        <span class="pf-badge" id="pfBadge">P/F</span>
+                        <span class="pf-label" data-i18n="label_pf">Sub-recipe</span>
+                    </label>
+                </div>
+                <div class="meta-grid">
+                    <div class="field-group span-2">
+                        <label class="field-label" for="dishName" data-i18n="label_dish_name">Dish Name</label>
+                        <input id="dishName" class="dl-input" type="text" data-i18n-ph="ph_dish"
+                            placeholder="e.g. Truffle Risotto" oninput="calculate()" autocomplete="off" />
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="category" data-i18n="label_category">Category</label>
+                        <select id="category" class="dl-select">
+                            <option value="starter" data-i18n-opt="cat_starter">Starter</option>
+                            <option value="main" data-i18n-opt="cat_main">Main</option>
+                            <option value="dessert" data-i18n-opt="cat_dessert">Dessert</option>
+                            <option value="drink" data-i18n-opt="cat_drink">Drink</option>
+                            <option value="other" data-i18n-opt="cat_other">Other</option>
+                        </select>
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="outputWeight" data-i18n="label_output">Yield (g/ml)</label>
+                        <input id="outputWeight" class="dl-input" type="number" value="300" min="1"
+                            oninput="calculate()" />
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="servings" data-i18n="label_servings">Servings</label>
+                        <input id="servings" class="dl-input" type="number" value="1" min="1" oninput="calculate()" />
+                    </div>
+                    <div class="field-group">
+                        <label class="field-label" for="markupInput" data-i18n="label_multiplier">Markup ×</label>
+                        <input id="markupInput" class="dl-input" type="number" value="3" min="1" step="0.1"
+                            oninput="onMarkupInput(this.value)" />
+                    </div>
+                </div>
+                <div class="markup-section no-print">
+                    <div class="markup-presets">
+                        <button class="mp" data-mv="2" onclick="setMarkup(2)">×2</button>
+                        <button class="mp" data-mv="2.5" onclick="setMarkup(2.5)">×2.5</button>
+                        <button class="mp on" data-mv="3" onclick="setMarkup(3)">×3</button>
+                        <button class="mp" data-mv="4" onclick="setMarkup(4)">×4</button>
+                        <button class="mp" data-mv="5" onclick="setMarkup(5)">×5</button>
+                    </div>
+                    <input type="range" id="markupSlider" min="1" max="8" step="0.1" value="3" class="markup-slider"
+                        oninput="onMarkupSlide(this.value)" aria-label="Markup slider" />
+                    <p class="markup-hint">
+                        <span data-i18n="hint_markup_low">×1.5–2 = low</span>&nbsp;·&nbsp;
+                        <span data-i18n="hint_markup_mid">×3 = standard</span>&nbsp;·&nbsp;
+                        <span data-i18n="hint_markup_high">×4+ = premium</span>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Ingredients -->
+            <div class="dl-card" id="ingredientsCard">
+                <div class="card-label-row">
+                    <h2 class="card-label" data-i18n="label_ingredients">Ingredients</h2>
+                    <button class="btn-add no-print" onclick="addIngredient()" aria-label="Add ingredient">
+                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="3" stroke-linecap="round" aria-hidden="true">
+                            <line x1="12" y1="5" x2="12" y2="19" />
+                            <line x1="5" y1="12" x2="19" y2="12" />
+                        </svg>
+                        <span data-i18n="btn_add_ing">Add Ingredient</span>
+                    </button>
+                </div>
+                <div class="ing-header no-print" role="row" aria-hidden="true">
+                    <span data-i18n="th_name">Ingredient</span>
+                    <span data-i18n="th_amount">Amount</span>
+                    <span data-i18n="th_unit">Unit</span>
+                    <span data-i18n="th_price_per_kg">Price/kg·L</span>
+                    <span data-i18n="th_waste">Waste %</span>
+                    <span data-i18n="th_supplier">Supplier</span>
+                    <span data-i18n="th_cost">Cost</span>
+                    <span></span>
+                </div>
+                <div id="ingredientsDiv" role="list"></div>
+                <div class="ing-totals">
+                    <span class="tot-label" data-i18n="label_total_cost">Total Prime Cost</span>
+                    <span class="tot-val" id="totalCostInline" aria-live="polite">—</span>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="action-row no-print">
+                <button class="btn-lime" onclick="saveDish()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                        <polyline points="7 3 7 8 15 8" />
+                    </svg>
+                    <span data-i18n="btn_save">Save Dish</span>
+                </button>
+                <button class="btn-ghost" onclick="resetForm()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <polyline points="1 4 1 10 7 10" />
+                        <path d="M3.51 15a9 9 0 1 0 .49-3.51" />
+                    </svg>
+                    <span data-i18n="btn_reset">New Recipe</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- ── RIGHT PANEL ── -->
+        <aside class="panel-right" aria-label="Results">
+
+            <!-- Results -->
+            <div class="dl-card results-card" id="resultsCard">
+                <h2 class="card-label" data-i18n="label_results">Live Results</h2>
+                <div class="results-grid">
+                    <div class="res-box">
+                        <p class="res-label" data-i18n="res_prime_cost">Prime Cost</p>
+                        <p class="res-val" id="cost" aria-live="polite">—</p>
+                        <p class="res-sub" data-i18n="res_prime_sub">Net cost</p>
+                    </div>
+                    <div class="res-box">
+                        <p class="res-label" data-i18n="res_per100">Per 100g</p>
+                        <p class="res-val" id="costPer100" aria-live="polite">—</p>
+                        <p class="res-sub" data-i18n="res_per100_sub">Cost density</p>
+                    </div>
+                    <div class="res-box accent">
+                        <p class="res-label" data-i18n="res_menu_price">Menu Price</p>
+                        <p class="res-val lime" id="price" aria-live="polite">—</p>
+                        <p class="res-sub" data-i18n="res_menu_sub">Prime × markup</p>
+                    </div>
+                    <div class="res-box accent">
+                        <p class="res-label" data-i18n="res_margin">Margin</p>
+                        <p class="res-val lime" id="margin" aria-live="polite">—</p>
+                        <p class="res-sub" data-i18n="res_margin_sub">Target &gt;65%</p>
+                    </div>
+                </div>
+                <div class="margin-track-wrap">
+                    <div class="margin-track-label">
+                        <span data-i18n="label_margin_health">Margin health</span>
+                        <span id="fcPctLabel" aria-live="polite">—</span>
+                    </div>
+                    <div class="margin-track" role="progressbar" aria-label="Margin" aria-valuemin="0"
+                        aria-valuemax="100">
+                        <div id="marginBar" class="margin-fill" style="width:0%"></div>
+                    </div>
+                    <p class="margin-msg" id="marginMsg" data-i18n="msg_margin_idle" aria-live="polite">Add ingredients
+                        to see margin health</p>
+                </div>
+            </div>
+
+            <!-- Saved -->
+            <div class="dl-card no-print" id="savedCard">
+                <div class="card-label-row">
+                    <h2 class="card-label" data-i18n="label_saved">Saved Recipes</h2>
+                    <div style="display:flex;gap:6px;align-items:center">
+                        <span class="saved-count" id="savedCount" aria-live="polite">0</span>
+                        <span class="pf-count-badge" id="pfCount" aria-live="polite" style="display:none"></span>
+                    </div>
+                </div>
+                <div id="savedList" class="saved-list" role="list"></div>
+                <p class="saved-empty" id="savedEmpty" data-i18n="msg_no_saved">No saved recipes yet.</p>
+            </div>
+
+            <!-- Tier info card -->
+            <div class="dl-card tier-card no-print" id="tierCard">
+                <div class="tier-current">
+                    <span class="tier-badge free" data-i18n="tier_free_badge">Commis</span>
+                    <span class="tier-label" data-i18n="tier_current_label">Current plan</span>
+                </div>
+                <p class="tier-limit" data-i18n="tier_limit_msg">5 recipes saved · Basic AI</p>
+                <button class="btn-pro btn-pro-full" onclick="openProModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                    <span data-i18n="btn_upgrade">Upgrade to PRO</span>
+                </button>
+            </div>
+        </aside>
+    </main>
+
+    <!-- ═══════════════════ MARKET / PRICE LIST PANEL ═══════════════════ -->
+    <section id="marketPanel" class="market-panel no-print" style="display:none" aria-label="Market price list"
+        role="region">
+
+        <div class="market-header">
+            <div class="market-header-left">
+                <h2 class="market-title" data-i18n="market_title">Market / Прайс</h2>
+                <p class="market-subtitle" data-i18n="market_subtitle">Edit prices to sync across all saved recipes</p>
+            </div>
+            <div class="market-header-right">
+                <div class="market-search-wrap">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                    </svg>
+                    <input id="marketSearch" class="market-search-input" type="text" data-i18n-ph="market_search_ph"
+                        placeholder="Search ingredient…" oninput="filterMarket(this.value)" autocomplete="off" />
+                </div>
+                <button class="btn-ghost market-save-btn" onclick="saveAllMarketPrices()" id="marketSaveBtn"
+                    style="display:none">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                        <polyline points="17 21 17 13 7 13 7 21" />
+                    </svg>
+                    <span data-i18n="market_save_all">Save All Changes</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Market column headers -->
+        <div class="market-col-header no-print">
+            <span data-i18n="th_name">Ingredient</span>
+            <span data-i18n="th_supplier">Supplier</span>
+            <span data-i18n="th_price_per_kg">Price/kg·L</span>
+            <span data-i18n="market_updated">Last Updated</span>
+        </div>
+
+        <!-- Scrollable list of ingredient groups -->
+        <div id="marketList" class="market-list" aria-live="polite"></div>
+
+        <!-- PRO gate overlay (shown when user is FREE) -->
+        <div class="market-gate" id="marketGate" style="display:none">
+            <div class="market-gate-card">
+                <div class="market-gate-icon" aria-hidden="true">🔒</div>
+                <p class="market-gate-title" data-i18n="market_gate_title">PRO Feature</p>
+                <p class="market-gate-desc" data-i18n="market_gate_desc">The Market tab is available on the Pro plan and
+                    above.</p>
+                <button class="btn-pro" onclick="openProModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                    <span data-i18n="btn_upgrade">Upgrade to PRO</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════════════ FLOATING AI BUTTON ═══════════════════ -->
+    <button id="aiFloatBtn" class="ai-float-btn no-print" onclick="toggleChat()" aria-label="Open Chef AI"
+        aria-expanded="false">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
+            <path d="M19 3l.9 2.1L22 6l-2.1.9L19 9l-.9-2.1L16 6l2.1-.9z" opacity=".7" />
+            <path d="M5 17l.6 1.4L7 19l-1.4.6L5 21l-.6-1.4L3 19l1.4-.6z" opacity=".5" />
+        </svg>
+        <span class="ai-float-ping" aria-hidden="true"></span>
+    </button>
+
+    <!-- ═══════════════════ AI CHAT WINDOW ═══════════════════ -->
+    <div id="aiChatWindow" class="ai-chat-window no-print" aria-hidden="true" role="dialog" aria-label="Chef AI">
+        <div class="ai-chat-header">
+            <div class="ai-header-left">
+                <div class="ai-header-avatar" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 3l1.5 4.5L18 9l-4.5 1.5L12 15l-1.5-4.5L6 9l4.5-1.5z" />
+                    </svg>
+                </div>
+                <div>
+                    <p class="ai-header-title">Chef AI</p>
+                    <p class="ai-header-sub" data-i18n="ai_header_sub">Smart kitchen assistant</p>
+                </div>
+            </div>
+            <button class="ai-chat-close" onclick="toggleChat()" aria-label="Close">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+        </div>
+
+        <div class="ai-quick-actions">
+            <p class="ai-quick-label" data-i18n="ai_quick_label">Quick Actions</p>
+            <div class="ai-quick-btns">
+                <button class="ai-quick-btn" onclick="quickAction('margin75')" data-i18n="qa_margin75">75%
+                    Margin</button>
+                <button class="ai-quick-btn" onclick="quickAction('waste')" data-i18n="qa_waste">Waste Guide</button>
+                <button class="ai-quick-btn" onclick="quickAction('subs')" data-i18n="qa_subs">Cheap Subs</button>
+                <button class="ai-quick-btn" onclick="quickAction('analyze')" data-i18n="qa_analyze">Analyze
+                    Dish</button>
+                <!-- NEW: Generate Menu Text -->
+                <button class="ai-quick-btn ai-quick-btn-gold" onclick="quickAction('menutext')"
+                    data-i18n="qa_menutext">✍️ Menu Text</button>
+            </div>
+        </div>
+
+        <div class="ai-messages" id="aiMessages" role="log" aria-live="polite"></div>
+
+        <div class="ai-input-row">
+            <!-- Voice indicator bar — shown while listening -->
+            <div class="voice-bar" id="voiceBar" aria-hidden="true">
+                <span class="voice-dot"></span>
+                <span class="voice-wave"></span>
+                <span class="voice-wave"></span>
+                <span class="voice-wave"></span>
+                <span class="voice-label" id="voiceLabel" data-i18n="voice_listening">Listening…</span>
+                <button class="voice-stop-btn" onclick="stopVoice()" aria-label="Stop listening">
+                    <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                    </svg>
+                </button>
+            </div>
+
+            <!-- Input wrapper with embedded mic icon -->
+            <div class="ai-input-wrap">
+                <input id="aiChatInput" class="ai-chat-input" type="text" data-i18n-ph="ai_ph"
+                    placeholder="Ask about your recipe…"
+                    onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage()}"
+                    autocomplete="off" />
+                <!-- Mic button inside input field -->
+                <button class="ai-mic-btn" id="aiMicBtn" onclick="toggleVoice()" aria-label="Voice input"
+                    title="Voice input">
+                    <svg class="mic-icon-default" width="14" height="14" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"
+                        aria-hidden="true">
+                        <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                        <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                        <line x1="12" y1="19" x2="12" y2="23" />
+                        <line x1="8" y1="23" x2="16" y2="23" />
+                    </svg>
+                    <span class="mic-recording-dot" aria-hidden="true"></span>
+                </button>
+            </div>
+
+            <button class="ai-send-btn" onclick="sendChatMessage()" aria-label="Send">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                </svg>
+            </button>
+        </div>
+        <p class="ai-disclaimer" data-i18n="ai_disclaimer">Mock AI — real API integration ready</p>
+    </div>
+
+    <!-- ═══════════════════════ PRO MODAL ═══════════════════════ -->
+    <div id="proModalOverlay" class="modal-overlay" aria-hidden="true" onclick="handleOverlayClick(event)">
+        <div class="pro-modal" role="dialog" aria-modal="true" aria-labelledby="proModalTitle">
+
+            <!-- Close -->
+            <button class="modal-close" onclick="closeProModal()" aria-label="Close">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <!-- Header -->
+            <div class="pro-modal-header">
+                <div class="pro-star-icon" aria-hidden="true">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                </div>
+                <h2 class="pro-modal-title" id="proModalTitle" data-i18n="pro_modal_title">Unlock Dishlytics PRO</h2>
+                <p class="pro-modal-sub" data-i18n="pro_modal_sub">Professional tools for professional kitchens.</p>
+            </div>
+
+            <!-- Pricing tiers -->
+            <div class="pro-tiers">
+                <div class="pro-tier">
+                    <div class="pro-tier-name">
+                        <span class="tier-badge free" data-i18n="tier_free_name">Free</span>
+                        <span class="pro-tier-role" data-i18n="tier_free_role">Commis</span>
+                    </div>
+                    <div class="pro-tier-price">$0<span data-i18n="tier_per_mo">/mo</span></div>
+                    <ul class="pro-tier-features">
+                        <li data-i18n="tier_free_f1">5 saved recipes</li>
+                        <li data-i18n="tier_free_f2">Basic calculator</li>
+                        <li data-i18n="tier_free_f3">Mock AI assistant</li>
+                        <li class="disabled" data-i18n="tier_free_f4">PDF export</li>
+                        <li class="disabled" data-i18n="tier_free_f5">Cloud sync</li>
+                    </ul>
+                </div>
+                <div class="pro-tier pro-tier-featured">
+                    <div class="pro-tier-popular" data-i18n="tier_popular">Most Popular</div>
+                    <div class="pro-tier-name">
+                        <span class="tier-badge pro" data-i18n="tier_pro_name">Pro</span>
+                        <span class="pro-tier-role" data-i18n="tier_pro_role">Sous-Chef</span>
+                    </div>
+                    <div class="pro-tier-price">$7<span data-i18n="tier_per_mo">/mo</span></div>
+                    <ul class="pro-tier-features">
+                        <li data-i18n="tier_pro_f1">♾️ Unlimited recipes</li>
+                        <li data-i18n="tier_pro_f2">🤖 Advanced AI consultations</li>
+                        <li data-i18n="tier_pro_f3">📄 PDF with custom logo</li>
+                        <li data-i18n="tier_pro_f4">☁️ Cloud sync & backups</li>
+                        <li data-i18n="tier_pro_f5">Sub-recipe linking</li>
+                    </ul>
+                </div>
+                <div class="pro-tier">
+                    <div class="pro-tier-name">
+                        <span class="tier-badge exec" data-i18n="tier_exec_name">Exec</span>
+                        <span class="pro-tier-role" data-i18n="tier_exec_role">Chef de Cuisine</span>
+                    </div>
+                    <div class="pro-tier-price">$14<span data-i18n="tier_per_mo">/mo</span></div>
+                    <ul class="pro-tier-features">
+                        <li data-i18n="tier_exec_f1">Everything in Pro</li>
+                        <li data-i18n="tier_exec_f2">🧠 AI sub-recipe calculator</li>
+                        <li data-i18n="tier_exec_f3">🔗 Multi-dish cost linking</li>
+                        <li data-i18n="tier_exec_f4">Team collaboration</li>
+                        <li data-i18n="tier_exec_f5">POS integration + API</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Waitlist form -->
+            <div class="pro-waitlist" id="waitlistSection">
+                <div class="waitlist-badge" aria-hidden="true">🚀</div>
+                <p class="waitlist-title" data-i18n="waitlist_title">Launching PRO soon!</p>
+                <p class="waitlist-desc" data-i18n="waitlist_desc">Enter your email to get a <strong>50% early-bird
+                        discount</strong> when we go live.</p>
+
+                <div class="waitlist-form" id="waitlistForm">
+                    <input id="waitlistEmail" class="waitlist-input" type="email" data-i18n-ph="waitlist_ph"
+                        placeholder="your@email.com" onkeydown="if(event.key==='Enter') joinWaitlist()" />
+                    <button class="btn-lime waitlist-btn" onclick="joinWaitlist()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                        <span data-i18n="waitlist_btn">Join Waitlist</span>
+                    </button>
+                </div>
+
+                <div class="waitlist-success" id="waitlistSuccess" style="display:none">
+                    <span class="success-icon" aria-hidden="true">⚡</span>
+                    <p class="success-msg" data-i18n="waitlist_success">You're on the list!</p>
+                    <p class="success-sub" id="waitlistSuccessSub" data-i18n="waitlist_success_sub">We'll notify you
+                        first when PRO launches.</p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════════════════ PRINT HEADER ═══════════════════ -->
+    <div class="print-only" id="printHeader">
+        <div class="print-brand">
+            <svg width="24" height="24" viewBox="0 0 34 34" fill="none" aria-hidden="true">
+                <rect x="5" y="24" width="24" height="5" rx="2.5" fill="#1a1a1a" />
+                <rect x="8" y="19" width="4" height="5" rx="1" fill="#2ECC71" opacity=".7" />
+                <rect x="14" y="14" width="4" height="10" rx="1" fill="#2ECC71" opacity=".85" />
+                <rect x="20" y="9" width="4" height="15" rx="1" fill="#2ECC71" />
+                <ellipse cx="10" cy="18" rx="5.5" ry="5" fill="#1a1a1a" />
+                <ellipse cx="17" cy="14" rx="6.5" ry="5.8" fill="#1a1a1a" />
+                <ellipse cx="24" cy="18" rx="5.5" ry="5" fill="#1a1a1a" />
+            </svg>
+            <span class="print-brand-name">Dishlytics</span>
+            <span class="print-tagline" data-i18n="print_tagline">Technical Recipe Card</span>
+        </div>
+        <div class="print-dish-meta">
+            <div class="print-dish-name" id="printDishName">—</div>
+            <div class="print-dish-details">
+                <span id="printCategory">—</span><span class="print-sep">·</span>
+                <span id="printYield">—</span><span class="print-sep">·</span>
+                <span id="printServings">—</span><span class="print-sep">·</span>
+                <span id="printDate">—</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ══ LOGIN / AUTH MODAL ══ -->
+    <div id="loginModal" class="modal-overlay" aria-hidden="true" onclick="handleLoginOverlayClick(event)" role="dialog"
+        aria-labelledby="loginModalTitle">
+        <div class="login-modal" role="document">
+
+            <button class="modal-close" onclick="closeLoginModal()" aria-label="Close">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                    stroke-linecap="round" aria-hidden="true">
+                    <line x1="18" y1="6" x2="6" y2="18" />
+                    <line x1="6" y1="6" x2="18" y2="18" />
+                </svg>
+            </button>
+
+            <!-- Signed-out state -->
+            <div id="loginForm">
+                <div class="login-modal-header">
+                    <div class="login-icon" aria-hidden="true">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                            <circle cx="12" cy="7" r="4" />
+                        </svg>
+                    </div>
+                    <h2 class="login-modal-title" id="loginModalTitle" data-i18n="auth_modal_title">Sign in to
+                        Dishlytics</h2>
+                    <p class="login-modal-sub" data-i18n="auth_modal_sub">Save your recipes to the cloud and sync across
+                        devices.</p>
+                </div>
+
+                <div class="login-field-group">
+                    <label class="field-label" for="loginEmailInput" data-i18n="auth_email_label">Email</label>
+                    <input id="loginEmailInput" class="dl-input" type="email" data-i18n-ph="auth_email_ph"
+                        placeholder="your@email.com" onkeydown="if(event.key==='Enter') submitLogin()" />
+                </div>
+
+                <button class="btn-lime login-submit-btn" onclick="submitLogin()" id="loginSubmitBtn">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                        <polyline points="10 17 15 12 10 7" />
+                        <line x1="15" y1="12" x2="3" y2="12" />
+                    </svg>
+                    <span data-i18n="auth_sign_in">Send Magic Link</span>
+                </button>
+
+                <p class="login-note" data-i18n="auth_magic_note">We'll send a magic link — no password needed.</p>
+                <p class="login-supabase-note">
+                    <span class="login-supabase-dot" aria-hidden="true"></span>
+                    <span data-i18n="auth_supabase_note">Auth powered by Supabase (TODO: connect endpoint)</span>
+                </p>
+            </div>
+
+            <!-- Signed-in state -->
+            <div id="loginSignedIn" style="display:none">
+                <div class="login-modal-header">
+                    <div class="login-avatar" id="loginAvatar" aria-hidden="true">👤</div>
+                    <h2 class="login-modal-title" data-i18n="auth_signed_in_as">Signed in as</h2>
+                    <p class="login-email-display" id="loginEmailDisplay">—</p>
+                </div>
+
+                <div class="login-tier-info">
+                    <div class="login-tier-row">
+                        <span data-i18n="auth_current_tier">Current plan</span>
+                        <span class="tier-badge" id="loginTierBadge">Free</span>
+                    </div>
+                    <div class="login-tier-row">
+                        <span data-i18n="auth_recipes_used">Recipes saved</span>
+                        <span id="loginRecipeCount">0 / 5</span>
+                    </div>
+                </div>
+
+                <button class="btn-pro login-upgrade-btn" onclick="closeLoginModal(); openProModal()">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                        <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
+                    </svg>
+                    <span data-i18n="btn_upgrade">Upgrade to PRO</span>
+                </button>
+
+                <button class="btn-ghost login-signout-btn" onclick="submitLogout()" id="loginSignOutBtn">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <polyline points="16 17 21 12 16 7" />
+                        <line x1="21" y1="12" x2="9" y2="12" />
+                    </svg>
+                    <span data-i18n="auth_sign_out">Sign Out</span>
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ══ PRICE SYNC CONFIRM DIALOG ══ -->
+    <div id="priceSyncDialog" class="price-sync-overlay" aria-hidden="true" role="dialog"
+        aria-labelledby="priceSyncTitle">
+        <div class="price-sync-card">
+            <div class="price-sync-icon" aria-hidden="true">🔄</div>
+            <p class="price-sync-title" id="priceSyncTitle" data-i18n="price_sync_title">Global Price Update</p>
+            <p class="price-sync-msg" id="priceSyncMsg">Update price for <strong id="priceSyncIngName">—</strong> in all
+                saved recipes?</p>
+            <p class="price-sync-detail">
+                <span data-i18n="price_sync_old">Old price:</span>
+                <strong id="priceSyncOld">—</strong> →
+                <span data-i18n="price_sync_new">New price:</span>
+                <strong id="priceSyncNewVal" style="color:var(--lime)">—</strong>
+            </p>
+            <p class="price-sync-pf-info" id="priceSyncPFInfo" style="display:none" aria-live="polite"></p>
+            <div class="price-sync-btns">
+                <button class="btn-lime price-sync-yes" id="priceSyncYes" data-i18n="price_sync_yes">Yes, update
+                    all</button>
+                <button class="btn-ghost price-sync-no" onclick="closePriceSync(false)" data-i18n="price_sync_no">This
+                    recipe only</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast no-print" role="status" aria-live="polite"></div>
+
+    <script src="database.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>
