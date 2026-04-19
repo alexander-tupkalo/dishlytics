@@ -48,7 +48,8 @@ html {
     --shadow-focus: 0 0 0 3px rgba(46, 204, 113, 0.18);
     --transition: all 0.18s ease;
     --chat-w: min(360px, calc(100vw - 24px));
-    --chat-h: min(560px, calc(100vh - 120px));
+    /* dvh = dynamic viewport height — shrinks when mobile keyboard opens */
+    --chat-h: min(560px, calc(100dvh - 120px));
 }
 
 body {
@@ -1349,13 +1350,18 @@ body {
 /* ═══ AI CHAT WINDOW ══════════════════════════════════════════ */
 .ai-chat-window {
     position: fixed;
+    /* bottom is repositioned via JS when keyboard opens */
     bottom: max(88px, calc(env(safe-area-inset-bottom, 0px) + 88px));
     right: 16px;
     z-index: 299;
     width: var(--chat-w);
+    /* dvh shrinks when virtual keyboard opens */
     max-height: var(--chat-h);
+    /* Ensure input area is always visible — flex column with scroll in messages */
     display: flex;
     flex-direction: column;
+    overflow: hidden;
+    /* clip rounded corners */
     background: rgba(20, 30, 46, 0.94);
     backdrop-filter: blur(32px) saturate(180%);
     -webkit-backdrop-filter: blur(32px) saturate(180%);
@@ -1365,7 +1371,7 @@ body {
     opacity: 0;
     transform: translateY(16px) scale(0.97);
     pointer-events: none;
-    transition: opacity .25s ease, transform .25s cubic-bezier(.34, 1.4, .64, 1);
+    transition: opacity .25s ease, transform .25s cubic-bezier(.34, 1.4, .64, 1), bottom .15s ease, max-height .15s ease;
 }
 
 .ai-chat-window.visible {
@@ -1376,9 +1382,26 @@ body {
 
 @media(max-width:400px) {
     .ai-chat-window {
-        left: 8px;
-        right: 8px;
+        left: 6px;
+        right: 6px;
         width: auto;
+        max-height: calc(100dvh - 140px);
+        border-radius: 14px;
+        bottom: max(72px, calc(env(safe-area-inset-bottom, 0px) + 72px));
+    }
+
+    .ai-quick-btns {
+        gap: 3px;
+    }
+
+    .ai-quick-btn {
+        font-size: .68rem;
+        padding: 4px 8px;
+        min-height: 34px;
+    }
+
+    .ai-messages {
+        min-height: 50px;
     }
 }
 
@@ -1500,7 +1523,8 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
-    min-height: 120px;
+    min-height: 80px;
+    /* reduced min so input is never pushed off */
     scrollbar-width: thin;
     scrollbar-color: rgba(255, 255, 255, 0.1) transparent;
 }
@@ -1629,6 +1653,8 @@ body {
     padding: 10px 12px 8px;
     border-top: 1px solid rgba(255, 255, 255, 0.06);
     flex-shrink: 0;
+    position: relative;
+    z-index: 1;
 }
 
 .ai-chat-input {
@@ -3708,19 +3734,39 @@ body {
 /* ── AI chat window mobile ── */
 @media(max-width:479px) {
     .ai-chat-window {
-        bottom: max(80px, calc(env(safe-area-inset-bottom, 0px)+80px));
+        /* On small screens: sit right above the FAB with minimal gap */
+        bottom: max(76px, calc(env(safe-area-inset-bottom, 0px) + 76px));
         right: 8px;
         left: 8px;
         width: auto;
+        /* Use all available height except FAB + safe area */
+        max-height: calc(100dvh - 160px);
+        border-radius: 16px;
     }
 
     .ai-quick-btns {
         gap: 4px;
+        flex-wrap: wrap;
     }
 
     .ai-quick-btn {
         padding: 5px 9px;
         font-size: .7rem;
+        min-height: 36px;
+    }
+
+    /* Make messages area smaller so input is always visible */
+    .ai-messages {
+        min-height: 60px;
+    }
+
+    /* Tighter voice bar on mobile */
+    .voice-bar {
+        padding: 6px 10px;
+    }
+
+    .voice-label {
+        font-size: .68rem;
     }
 }
 
@@ -3840,6 +3886,95 @@ select,
     flex: 1;
 }
 
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE AI CHAT — INPUT VISIBILITY HARDENING
+   Ensures input row and mic button never get cut off
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Ensure chat window flex column does not hide its last children */
+.ai-chat-window.visible {
+    /* Force flex children to respect container height */
+    overflow: hidden;
+}
+
+/* Messages area is the ONLY element that should shrink/scroll */
+.ai-messages {
+    flex: 1 1 auto;
+    /* grow AND shrink */
+    min-height: 0;
+    /* override min-height so flex can actually shrink it */
+    overflow-y: auto;
+}
+
+/* These must never shrink — they anchor the bottom of the window */
+.ai-quick-actions,
+.ai-input-row,
+.ai-disclaimer,
+.voice-bar.active {
+    flex-shrink: 0;
+}
+
+/* Prevent the voice bar from hiding the input when active */
+.ai-input-row {
+    flex-wrap: nowrap;
+    align-items: flex-end;
+}
+
+/* ai-input-wrap: always fills available width */
+.ai-input-wrap {
+    flex: 1 1 0%;
+    min-width: 0;
+}
+
+/* Fallback for browsers without dvh support */
+@supports not (height: 100dvh) {
+    :root {
+        --chat-h: min(480px, calc(100vh - 180px));
+    }
+
+    @media(max-width:479px) {
+        .ai-chat-window {
+            max-height: calc(100vh - 180px) !important;
+        }
+    }
+}
+
+/* Ensure the float button is always tappable above the chat window */
+.ai-float-btn {
+    z-index: 302 !important;
+}
+
+/* On narrow screens, reduce quick action wrap height */
+@media(max-width:360px) {
+    .ai-quick-actions {
+        padding: 7px 10px;
+        max-height: 72px;
+        overflow-y: auto;
+    }
+
+    .ai-quick-btns {
+        gap: 3px;
+    }
+
+    .ai-chat-header {
+        padding: 10px 12px 9px;
+    }
+}
+
+/* Ensure input focus scrolls it into view on iOS Safari */
+.ai-chat-input {
+    /* iOS: prevent zoom on focus (must be 16px) */
+    font-size: max(16px, .85rem);
+}
+
+@media(min-width:480px) {
+    .ai-chat-input {
+        font-size: .85rem;
+    }
+}
+
+
 .print-only {
     display: none;
 }
@@ -3883,7 +4018,7 @@ select,
     transition: color .15s, background .15s;
     padding: 0;
     flex-shrink: 0;
-    position: absolute;
+    z-index: 2;
 }
 
 .ai-mic-btn:hover {

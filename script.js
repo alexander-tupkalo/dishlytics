@@ -2676,6 +2676,40 @@ document.addEventListener('DOMContentLoaded',()=>{
     }
   });
 
+  // ── Virtual keyboard / viewport resize handler ────────────────────────
+  // When mobile keyboard opens, window.visualViewport shrinks.
+  // We reposition the chat window so the input row stays visible.
+  if (window.visualViewport) {
+    const repositionChat = () => {
+      const win = document.getElementById('aiChatWindow');
+      if (!win || !chatOpen) return;
+
+      const vvHeight  = window.visualViewport.height;   // visible height with keyboard
+      const vvOffset  = window.visualViewport.offsetTop; // scroll offset
+      const fabHeight = 56 + 12;    // FAB (56px) + gap (12px)
+      const safeArea  = parseInt(getComputedStyle(document.documentElement)
+                          .getPropertyValue('--safe-bottom') || '0') || 0;
+
+      // Position window above FAB within visual viewport
+      const newBottom = vvHeight < window.innerHeight
+        ? window.innerHeight - vvHeight - vvOffset + fabHeight  // keyboard open
+        : null;  // keyboard closed — let CSS handle it
+
+      if (newBottom !== null) {
+        win.style.bottom = newBottom + 'px';
+        // Shrink max-height so input row is never off-screen
+        const available = vvHeight - fabHeight - 24;
+        win.style.maxHeight = Math.max(200, available) + 'px';
+      } else {
+        win.style.bottom = '';
+        win.style.maxHeight = '';
+      }
+    };
+
+    window.visualViewport.addEventListener('resize',  repositionChat);
+    window.visualViewport.addEventListener('scroll',  repositionChat);
+  }
+
   // Outside click
   document.addEventListener('click',e=>{
     const win=document.getElementById('aiChatWindow');
