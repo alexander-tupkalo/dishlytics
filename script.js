@@ -674,12 +674,27 @@ const TRANSLATIONS = {
 /* ══════════════════════════════════════════════════════════════════
    CURRENCY & STATE
    ══════════════════════════════════════════════════════════════════ */
-const CURRENCY_MAP={en:{symbol:'$',code:'USD'},ru:{symbol:'₽',code:'RUB'},ua:{symbol:'₴',code:'UAH'}};
+/* ── Currency map
+   EN  → USD ($)
+   RU  → UAH (₴)  ← stays UAH regardless of language selection
+   UA  → UAH (₴)
+   Currency is NEVER auto-switched when the user changes language between RU/UA.
+   Prices stored in localStorage remain in UAH at all times.
+── */
+const CURRENCY_MAP={
+  en:{symbol:'$',  code:'USD'},
+  ru:{symbol:'₴',  code:'UAH'},   // RU interface, UAH prices
+  ua:{symbol:'₴',  code:'UAH'},
+};
+
+/* Derive the display currency from the map without touching prices */
+function getCurrency(){ return CURRENCY_MAP[currentLang] ?? CURRENCY_MAP.ua; }
+
 let currentLang='en', currentMarkup=3, rowIdCounter=0, chatOpen=false, chatInitialised=false;
 
 /* ── Helpers ── */
 function t(k){return TRANSLATIONS[currentLang]?.[k]??TRANSLATIONS.en[k]??k}
-function sym(){return CURRENCY_MAP[currentLang]?.symbol??'$'}
+function sym(){return getCurrency().symbol}
 function fmt(v){return sym()+parseFloat(v).toFixed(2)}
 function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
@@ -692,10 +707,17 @@ function setLang(lang){
   try{localStorage.setItem('dl_lang',lang)}catch(e){}
   document.documentElement.setAttribute('data-lang',lang);
   document.documentElement.lang=lang==='ua'?'uk':lang;
-  const cur=CURRENCY_MAP[lang];
+  const cur=getCurrency();
   const badge=document.getElementById('currencyBadge');
   if(badge)badge.textContent=cur.symbol+' '+cur.code;
-  try{localStorage.setItem('dl_currency',JSON.stringify(cur))}catch(e){}
+  /* Only persist currency when switching TO English (USD).
+     RU and UA both use UAH — no currency change needed, no overwrite. */
+  if(lang==='en'){
+    try{localStorage.setItem('dl_currency',JSON.stringify(cur))}catch(e){}
+  } else {
+    // Ensure any stale ₽ entry is cleared
+    try{localStorage.setItem('dl_currency',JSON.stringify({symbol:'₴',code:'UAH'}))}catch(e){}
+  }
   document.querySelectorAll('.lb').forEach(b=>b.classList.toggle('on',b.dataset.lang===lang));
   document.querySelectorAll('[data-i18n]').forEach(el=>{const v=t(el.getAttribute('data-i18n'));if(typeof v==='string')el.textContent=v});
   document.querySelectorAll('[data-i18n-ph]').forEach(el=>{const v=t(el.getAttribute('data-i18n-ph'));if(typeof v==='string')el.placeholder=v});
