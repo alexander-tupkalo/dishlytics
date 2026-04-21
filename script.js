@@ -192,6 +192,30 @@ const TRANSLATIONS = {
     fc_label:'Food cost:', print_tagline:'Technical Recipe Card',
     /* ── Tabs ── */
     tab_calculator:'Calculator',
+    tab_invoices:'Invoices',
+    inv_title:'AI Invoice Scanner',
+    inv_subtitle:'Photograph a supplier invoice — AI reads prices and updates your database',
+    inv_stat_scans:'Scans', inv_stat_updated:'Prices Updated', inv_stat_last:'Last Scan',
+    inv_step1:'Take a photo of the supplier invoice',
+    inv_step2:'AI reads product names and new prices',
+    inv_step3:'Review changes and confirm to update all recipes',
+    inv_history_empty:'No scans yet — tap the gold button to scan your first invoice.',
+    btn_scan_invoice:'Scan Invoice',
+    fab_scan_label:'Scan',
+    inv_items_found:'price change(s) detected',
+    inv_selected:'selected',
+    inv_select_all:'Select all changes',
+    inv_summary_prefix:'Found', inv_summary_up:'increases', inv_summary_down:'decreases',
+    inv_summary_avg:'Average change:',
+    inv_prices_updated:'price(s) updated across all recipes',
+    inv_prices_updated_short:'price(s) updated',
+    inv_view_scan:'View',
+    inv_confirm_btn:'Confirm & Update All',
+    inv_cancel_btn:'Cancel',
+    inv_disclaimer:'AI extraction may contain errors. Always verify prices before confirming.',
+    inv_processing_title:'AI is reading your invoice…',
+    inv_processing_sub:'This takes a few seconds',
+    inv_review_title:'Invoice Scan Complete',
     tab_pf_library:'P/F Library',
     pf_library_title:'P/F Library',
     pf_library_subtitle:'All your semi-finished products with live cost-per-kg',
@@ -336,6 +360,16 @@ const TRANSLATIONS = {
     ai_subs_unknown:i=>`No swaps for "${i}" yet. Look for local/seasonal alternatives.`,
     ai_subs_intro:(i,subs)=>`💡 **Cheaper alternatives for ${i}:**\n\n${subs.map(s=>'• '+s).join('\n')}`,
     ai_custom_fallback:'Great question! Set USE_REAL_AI = true and add your OpenAI key to get personalised responses.',
+    /* Waste guide generic fallback */
+    ai_waste_ref_title:'📋 **Waste Reference**',
+    ai_waste_ref_hint:'Mention an ingredient to auto-apply waste%.',
+    /* Subs generic fallback */
+    ai_subs_list_prefix:'💡 Swap suggestions available for:',
+    ai_subs_list_hint:'Mention an ingredient name.',
+    /* Cost context */
+    ai_cost_no_ing:'Add ingredients first.',
+    ai_cost_high:(cat,cost,sym)=>`Prime cost **${sym}${cost}** is on the high side for a ${cat}.\n\n• Check waste percentages\n• Consider cheaper swaps\n• Reduce portion by 5–10%`,
+    ai_cost_ok:(cat,cost,sym,margin)=>`Prime cost **${sym}${cost}** looks good for a ${cat}. Margin: ${margin}%.`,
   },
 
   ru: {
@@ -370,6 +404,54 @@ const TRANSLATIONS = {
     msg_no_ing:'Добавьте хотя бы один ингредиент.',
     fc_label:'Доля продуктов:', print_tagline:'Технологическая карта',
     tab_calculator:'Калькулятор',
+    tab_invoices:'Накладні',
+    inv_title:'AI Сканер накладних',
+    inv_subtitle:'Сфотографуйте накладну постачальника — AI зчитає ціни і оновить базу',
+    inv_stat_scans:'Сканів', inv_stat_updated:'Цін оновлено', inv_stat_last:'Останнє',
+    inv_step1:'Сфотографуйте накладну постачальника',
+    inv_step2:'AI розпізнає назви та нові ціни',
+    inv_step3:'Перевірте зміни та підтвердіть оновлення',
+    inv_history_empty:'Немає сканів — натисніть золоту кнопку щоб розпочати.',
+    btn_scan_invoice:'Сканувати',
+    fab_scan_label:'Скан',
+    inv_items_found:'змін цін виявлено',
+    inv_selected:'вибрано',
+    inv_select_all:'Вибрати всі зміни',
+    inv_summary_prefix:'Знайдено', inv_summary_up:'підвищень', inv_summary_down:'зниження',
+    inv_summary_avg:'Середня зміна:',
+    inv_prices_updated:'цін оновлено в усіх рецептах',
+    inv_prices_updated_short:'цін оновлено',
+    inv_view_scan:'Переглянути',
+    inv_confirm_btn:'Підтвердити та оновити все',
+    inv_cancel_btn:'Скасувати',
+    inv_disclaimer:'AI може помилятися. Перевірте ціни перед підтвердженням.',
+    inv_processing_title:'AI читає накладну…',
+    inv_processing_sub:'Це займе кілька секунд',
+    inv_review_title:'Накладну оброблено',
+    tab_invoices:'Накладные',
+    inv_title:'AI Сканер накладных',
+    inv_subtitle:'Сфотографируйте накладную поставщика — AI считает цены и обновит базу',
+    inv_stat_scans:'Сканов', inv_stat_updated:'Цен обновлено', inv_stat_last:'Последнее',
+    inv_step1:'Сфотографируйте накладную поставщика',
+    inv_step2:'AI распознаёт наименования и новые цены',
+    inv_step3:'Проверьте изменения и подтвердите обновление',
+    inv_history_empty:'Нет сканов — нажмите золотую кнопку чтобы начать.',
+    btn_scan_invoice:'Сканировать',
+    fab_scan_label:'Скан',
+    inv_items_found:'изменений цен обнаружено',
+    inv_selected:'выбрано',
+    inv_select_all:'Выбрать все изменения',
+    inv_summary_prefix:'Найдено', inv_summary_up:'повышений', inv_summary_down:'снижений',
+    inv_summary_avg:'Среднее изменение:',
+    inv_prices_updated:'цен обновлено во всех рецептах',
+    inv_prices_updated_short:'цен обновлено',
+    inv_view_scan:'Просмотр',
+    inv_confirm_btn:'Подтвердить и обновить всё',
+    inv_cancel_btn:'Отмена',
+    inv_disclaimer:'AI может ошибаться. Проверьте цены перед подтверждением.',
+    inv_processing_title:'AI читает накладную…',
+    inv_processing_sub:'Это займёт несколько секунд',
+    inv_review_title:'Накладная обработана',
     tab_pf_library:'Бібліотека П/Ф',
     pf_library_title:'Бібліотека П/Ф',
     pf_library_subtitle:'Усі ваші напівфабрикати з актуальною собівартістю за кг',
@@ -519,6 +601,13 @@ const TRANSLATIONS = {
     ai_subs_unknown:i=>`Нет замен для "${i}". Ищите местные аналоги.`,
     ai_subs_intro:(i,subs)=>`💡 **Замены для ${i}:**\n\n${subs.map(s=>'• '+s).join('\n')}`,
     ai_custom_fallback:'Отличный вопрос! Задайте USE_REAL_AI = true и добавьте ключ OpenAI.',
+    ai_waste_ref_title:'📋 **Справка по отходам**',
+    ai_waste_ref_hint:'Назовите ингредиент — автоматически применю процент отхода.',
+    ai_subs_list_prefix:'💡 Замены доступны для:',
+    ai_subs_list_hint:'Введите название ингредиента.',
+    ai_cost_no_ing:'Сначала добавьте ингредиенты.',
+    ai_cost_high:(cat,cost,sym)=>`Себестоимость **${sym}${cost}** высокая для категории «${cat}».\n\n• Проверьте % отходов\n• Рассмотрите дешёвые замены\n• Уменьшите порцию на 5–10%`,
+    ai_cost_ok:(cat,cost,sym,margin)=>`Себестоимость **${sym}${cost}** нормальная для «${cat}». Маржа: ${margin}%.`,
   },
 
   ua: {
@@ -668,6 +757,13 @@ const TRANSLATIONS = {
     ai_subs_unknown:i=>`Немає замінників для "${i}". Шукайте місцеві альтернативи.`,
     ai_subs_intro:(i,subs)=>`💡 **Замінники для ${i}:**\n\n${subs.map(s=>'• '+s).join('\n')}`,
     ai_custom_fallback:'Чудове питання! Задайте USE_REAL_AI = true і додайте ключ OpenAI.',
+    ai_waste_ref_title:'📋 **Довідник відходів**',
+    ai_waste_ref_hint:'Назвіть інгредієнт — автоматично застосую відсоток відходу.',
+    ai_subs_list_prefix:'💡 Замінники доступні для:',
+    ai_subs_list_hint:'Введіть назву інгредієнта.',
+    ai_cost_no_ing:'Спочатку додайте інгредієнти.',
+    ai_cost_high:(cat,cost,sym)=>`Собівартість **${sym}${cost}** висока для категорії «${cat}».\n\n• Перевірте % відходів\n• Розгляньте дешеві замінники\n• Зменшіть порцію на 5–10%`,
+    ai_cost_ok:(cat,cost,sym,margin)=>`Собівартість **${sym}${cost}** нормальна для «${cat}». Маржа: ${margin}%.`,
   },
 };
 
@@ -1790,15 +1886,55 @@ function processAIRequest(query){
   /* 4. Waste */
   if(q==='waste'||q.includes('waste')||q.includes('loss')||q.includes('отход')||q.includes('відхід')||q.includes('shrink')||q.includes('уварив')){
     const wDB=tr.ai_waste_data||{};
+    /* Build a cross-language alias map so "лосось" matches the "salmon" entry */
+    const _wasteAliases = {};
+    if(window.INGREDIENT_DB){
+      window.INGREDIENT_DB.forEach(item=>{
+        const enKey=(item.name||'').toLowerCase();
+        const aliases=[enKey,(item.name_ru||'').toLowerCase(),(item.name_ua||'').toLowerCase()];
+        aliases.forEach(a=>{ if(a) _wasteAliases[a]=enKey; });
+      });
+    }
+    /* Also add inline aliases for the most common items */
+    const _inlineAliases={
+      'лосось':'salmon','форель':'trout','тунец':'tuna','тунець':'tuna',
+      'креветки':'shrimp','креветка':'shrimp',
+      'курица':'chicken','курча':'chicken','курка':'chicken',
+      'говядина':'beef','яловичина':'beef',
+      'картофель':'potato','картопля':'potato',
+      'лук':'onion','цибуля':'onion',
+      'морковь':'carrot','морква':'carrot',
+      'морской окунь':'sea bass','морський окунь':'sea bass',
+      'осьминог':'octopus','восьминіг':'octopus',
+      'кальмар':'squid',
+    };
+    Object.assign(_wasteAliases,_inlineAliases);
+
+    /* Resolve query and ingredient-name tokens to canonical EN key */
+    const _resolveWasteKey = (str)=>{
+      const s2=str.toLowerCase().trim();
+      if(_wasteAliases[s2]) return _wasteAliases[s2];
+      // partial match
+      for(const alias of Object.keys(_wasteAliases)){
+        if(s2.includes(alias)||alias.includes(s2)) return _wasteAliases[alias];
+      }
+      return s2;
+    };
+
     for(const key of Object.keys(wDB)){
-      if(q.includes(key)){
+      /* match if query contains the key OR a localized alias that resolves to this key */
+      const queryResolved=_resolveWasteKey(q);
+      if(q.includes(key)||queryResolved===key){
         const entry=wDB[key];
         const rows=document.querySelectorAll('.ing-row-desktop');
         let found=false;
         rows.forEach(row=>{
           const id=row.id.replace('dRow-','');
           const nameEl=document.getElementById('iName-'+id);
-          if(nameEl&&nameEl.value.trim().toLowerCase().includes(key)){
+          if(!nameEl)return;
+          const ingName=nameEl.value.trim().toLowerCase();
+          const ingResolved=_resolveWasteKey(ingName);
+          if(ingName.includes(key)||ingResolved===key){
             const wEl=document.getElementById('iWaste-'+id);
             if(wEl){wEl.value=entry.pct;found=true}
           }
@@ -1807,9 +1943,11 @@ function processAIRequest(query){
         return typeof tr.ai_waste_intro==='function'?tr.ai_waste_intro(key.charAt(0).toUpperCase()+key.slice(1),entry.pct,entry.tip):'';
       }
     }
-    if(q==='waste'){
+    if(q==='waste'||q==='відходи'||q==='отходы'){
       const lines=Object.entries(wDB).map(([k,v])=>`• ${k.charAt(0).toUpperCase()+k.slice(1)}: ~${v.pct}%`).join('\n');
-      return `📋 **Waste Reference**\n\n${lines}\n\nMention an ingredient to auto-apply waste%.`;
+      const title = t('ai_waste_ref_title');
+      const hint  = t('ai_waste_ref_hint');
+      return `${title}\n\n${lines}\n\n${hint}`;
     }
     const ing=q.replace(/waste|loss|отход|відхід|shrink|of|для/g,'').trim();
     return typeof tr.ai_waste_unknown==='function'?tr.ai_waste_unknown(ing):'';
@@ -1818,12 +1956,28 @@ function processAIRequest(query){
   /* 5. Subs */
   if(q==='subs'||q.includes('sub')||q.includes('replac')||q.includes('cheaper')||q.includes('замен')||q.includes('замін')||q.includes('дешев')){
     const sDB=tr.ai_subs_data||{};
+    /* Inline alias map for subs — localized ingredient names → EN key */
+    const _subsAliases={
+      'пармезан':'parmesan','кедровые орехи':'pine nuts','кедрові горіхи':'pine nuts',
+      'трюфель':'truffle','трюфельная паста':'truffle','трюфельна паста':'truffle',
+      'шафран':'saffron','морской окунь':'sea bass','морський окунь':'sea bass',
+      'лосось':'salmon','сливки':'cream','вершки':'cream',
+      'масло':'butter','масло сливочное':'butter','вершкове масло':'butter',
+      'осьминог':'octopus','восьминіг':'octopus','кальмар':'squid',
+      'орехи кедровые':'pine nuts',
+    };
     for(const key of Object.keys(sDB)){
-      if(q.includes(key))return typeof tr.ai_subs_intro==='function'?tr.ai_subs_intro(key.charAt(0).toUpperCase()+key.slice(1),sDB[key]):'';
+      /* Check if query contains the EN key directly, or a localized alias for it */
+      const aliasForKey=Object.keys(_subsAliases).find(a=>_subsAliases[a]===key&&q.includes(a));
+      if(q.includes(key)||aliasForKey){
+        return typeof tr.ai_subs_intro==='function'?tr.ai_subs_intro(key.charAt(0).toUpperCase()+key.slice(1),sDB[key]):'';
+      }
     }
-    if(q==='subs'){
+    if(q==='subs'||q==='замены'||q==='замінники'){
       const keys=Object.keys(sDB).map(k=>k.charAt(0).toUpperCase()+k.slice(1)).join(', ');
-      return `💡 Swap suggestions available for: **${keys}**.\n\nMention an ingredient name.`;
+      const prefix = t('ai_subs_list_prefix');
+      const hint   = t('ai_subs_list_hint');
+      return `${prefix} **${keys}**.\n\n${hint}`;
     }
     const ing=q.replace(/sub|replac|cheaper|замен|замін|дешев/g,'').trim();
     return typeof tr.ai_subs_unknown==='function'?tr.ai_subs_unknown(ing):'';
@@ -1831,11 +1985,19 @@ function processAIRequest(query){
 
   /* 6. Cost context */
   if(q.includes('cost')||q.includes('expensive')||q.includes('себестоим')||q.includes('собівартість')||q.includes('дорог')){
-    if(!ctx.hasIng)return'Add ingredients first.';
+    if(!ctx.hasIng)return t('ai_cost_no_ing');
     const thr={starter:5,main:15,dessert:4,drink:3};
     const limit=thr[ctx.cat]||10;
-    if(ctx.prime>limit)return `Prime cost **${s}${ctx.prime.toFixed(2)}** is on the high side for a ${ctx.cat}.\n\n• Check waste percentages\n• Consider cheaper swaps\n• Reduce portion by 5–10%`;
-    return `Prime cost **${s}${ctx.prime.toFixed(2)}** looks good for a ${ctx.cat}. Margin: ${ctx.margin.toFixed(1)}%.`;
+    const highFn=TRANSLATIONS[currentLang]?.ai_cost_high;
+    const okFn  =TRANSLATIONS[currentLang]?.ai_cost_ok;
+    if(ctx.prime>limit){
+      return typeof highFn==='function'
+        ?highFn(ctx.cat,ctx.prime.toFixed(2),s)
+        :`${t('ai_cost_high_fallback')||'Prime cost'} **${s}${ctx.prime.toFixed(2)}** — ${ctx.cat}`;
+    }
+    return typeof okFn==='function'
+      ?okFn(ctx.cat,ctx.prime.toFixed(2),s,ctx.margin.toFixed(1))
+      :`**${s}${ctx.prime.toFixed(2)}** — ${ctx.cat}. ${ctx.margin.toFixed(1)}%`;
   }
 
   /* 7. Fallback */
@@ -2229,9 +2391,10 @@ function switchTab(tab) {
 
   // All panels — hide, then show the right one
   const panels = {
-    calculator:  document.getElementById('mainContent'),
-    market:      document.getElementById('marketPanel'),
-    'pf-library':document.getElementById('pfPanel'),
+    calculator:   document.getElementById('mainContent'),
+    market:       document.getElementById('marketPanel'),
+    'pf-library': document.getElementById('pfPanel'),
+    invoices:     document.getElementById('invoicesPanel'),
   };
   Object.entries(panels).forEach(([key, el]) => {
     if (el) el.style.display = key === tab ? '' : 'none';
@@ -2255,9 +2418,10 @@ function switchTab(tab) {
     }
   } else if (tab === 'pf-library') {
     renderPFLibrary();
-    // Clear any stale search
     const search = document.getElementById('pfSearch');
     if (search) search.value = '';
+  } else if (tab === 'invoices') {
+    renderInvoiceHistory();
   }
 }
 
@@ -2665,6 +2829,478 @@ function applyPFDefaults(data) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   ★  AI INVOICE SCANNER
+   ══════════════════════════════════════════════════════════════════
+   Architecture:
+   triggerInvoiceScan()  →  opens file picker (camera on mobile)
+   handleInvoiceFile()   →  reads file as base64, shows processing overlay
+   sendImageToAI()       →  STUB: replace with real API call
+   mockScanResponse()    →  returns fake data for testing
+   showInvReviewModal()  →  renders the price-change review modal
+   confirmInvResults()   →  applies confirmed changes via closePriceSync()
+   ══════════════════════════════════════════════════════════════════ */
+
+/* ── Invoice scan history stored in localStorage ── */
+const INV_STORAGE_KEY = 'dl_invoice_history';
+
+/* ── State ── */
+let _invScanResults = [];      // current scan result rows
+let _invCurrentBase64 = null;  // image being processed
+
+/* ─────────────────────────────────────────────────────────────
+   triggerInvoiceScan()
+   Opens the native file picker with camera capture on mobile.
+   Called by both the FAB (mobile) and the inline desktop button.
+   ───────────────────────────────────────────────────────────── */
+function triggerInvoiceScan() {
+  const input = document.getElementById('invoiceFileInput');
+  if (input) input.click();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   handleInvoiceFile(input)
+   Fires when the user selects or photographs an image.
+   Converts to Base64 and triggers the AI processing flow.
+   ───────────────────────────────────────────────────────────── */
+function handleInvoiceFile(input) {
+  const file = input.files?.[0];
+  if (!file) return;
+
+  // Reset so the same file can be selected again later
+  input.value = '';
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    const base64 = e.target.result;          // full data-URL string
+    _invCurrentBase64 = base64;
+
+    // Show the processing overlay with the image thumbnail
+    _showInvProcessing(base64);
+
+    // Send to AI (real backend) or use mock
+    sendImageToAI(base64)
+      .then(results => {
+        _hideInvProcessing();
+        showInvReviewModal(results);
+      })
+      .catch(err => {
+        _hideInvProcessing();
+        showToast('⚠ ' + (err.message || 'Scan failed. Please try again.'), 'danger');
+      });
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   sendImageToAI(base64DataURL)
+   ─────────────────────────────────────────────────────────────
+   ★ BACKEND INTEGRATION POINT ★
+   Replace the mock below with your real API call.
+
+   Expected return value — array of objects:
+   [
+     { name: 'Salmon', nameLoc: 'Лосось', oldPrice: 1200, newPrice: 1350 },
+     ...
+   ]
+
+   The base64DataURL looks like: "data:image/jpeg;base64,/9j/4AAQ..."
+   Strip the prefix if your API expects raw base64:
+     const rawBase64 = base64DataURL.split(',')[1];
+   ───────────────────────────────────────────────────────────── */
+async function sendImageToAI(base64DataURL) {
+  // ── TODO: Replace this block with your real backend call ────
+  //
+  // Example (OpenAI Vision):
+  // const rawBase64 = base64DataURL.split(',')[1];
+  // const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  //   method: 'POST',
+  //   headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + OPENAI_API_KEY },
+  //   body: JSON.stringify({
+  //     model: 'gpt-4o',
+  //     max_tokens: 1000,
+  //     messages: [{
+  //       role: 'user',
+  //       content: [
+  //         { type: 'image_url', image_url: { url: base64DataURL } },
+  //         { type: 'text', text: 'Extract all product names and prices from this invoice. Return JSON array: [{name, oldPrice, newPrice}]. Match product names to the known DB: ' + window.INGREDIENT_DB?.map(i=>i.name).join(', ') }
+  //       ]
+  //     }]
+  //   })
+  // });
+  // const data = await response.json();
+  // return JSON.parse(data.choices[0].message.content);
+  //
+  // ─────────────────────────────────────────────────────────────
+  // MOCK — remove when backend is ready
+  return mockScanResponse();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   mockScanResponse()
+   Returns hardcoded sample data simulating an AI parse.
+   Shows after a 2-second artificial delay.
+   ───────────────────────────────────────────────────────────── */
+function mockScanResponse() {
+  return new Promise(resolve => {
+    setTimeout(() => {
+      // Simulate AI finding these items on the invoice
+      // oldPrice = current price from DB_PRICE_SYNC overrides or DB
+      const DB = window.INGREDIENT_DB || [];
+      const overrides = window.DB_PRICE_SYNC?.loadPriceOverrides() || {};
+
+      const mockItems = [
+        { engKey: 'salmon', newPrice: 780 },
+        { engKey: 'chicken breast', newPrice: 168 },
+        { engKey: 'potato', newPrice: 22 },
+        { engKey: 'onion', newPrice: 19 },
+        { engKey: 'butter (unsalted)', newPrice: 310 },
+        { engKey: 'heavy cream 33%', newPrice: 175 },
+        { engKey: 'parmesan (parmigiano)', newPrice: 890 },
+        { engKey: 'shrimp (raw, shell-on)', newPrice: 395 },
+      ];
+
+      const results = mockItems
+        .map(({ engKey, newPrice }) => {
+          const item = DB.find(i => i.name.toLowerCase() === engKey) ||
+                       DB.find(i => i.name.toLowerCase().includes(engKey.split(' ')[0]));
+          if (!item) return null;
+          const overrideKey = item.name.toLowerCase().trim();
+          const oldPrice = overrides[overrideKey]?.price ?? item.price_per_unit;
+          const langKey = currentLang === 'en' ? 'name'
+                        : currentLang === 'ru' ? 'name_ru'
+                        : 'name_ua';
+          return {
+            name:     item.name,
+            nameLoc:  item[langKey] || item.name,
+            oldPrice: parseFloat(oldPrice) || 0,
+            newPrice: parseFloat(newPrice),
+            unit:     item.unit || 'kg',
+            supplier: item.supplier || '—',
+          };
+        })
+        .filter(Boolean)
+        // Only return items where price actually changed
+        .filter(r => Math.abs(r.oldPrice - r.newPrice) > 0.01);
+
+      resolve(results);
+    }, 2000); // 2-second simulated delay
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────
+   _showInvProcessing(base64)  /  _hideInvProcessing()
+   Controls the full-screen "AI is reading..." overlay.
+   ───────────────────────────────────────────────────────────── */
+function _showInvProcessing(base64) {
+  const overlay = document.getElementById('invProcessingOverlay');
+  const thumb   = document.getElementById('invPreviewThumb');
+  if (!overlay) return;
+
+  // Show image preview inside the overlay
+  if (thumb && base64) {
+    thumb.src = base64;
+    thumb.style.display = 'block';
+  }
+
+  overlay.classList.add('active');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+
+  // Update scan FAB to scanning state
+  document.getElementById('scanFab')?.classList.add('scanning');
+}
+
+function _hideInvProcessing() {
+  const overlay = document.getElementById('invProcessingOverlay');
+  if (!overlay) return;
+  overlay.classList.remove('active');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  document.getElementById('scanFab')?.classList.remove('scanning');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   showInvReviewModal(results)
+   Builds and opens the price-change review bottom sheet / modal.
+   ───────────────────────────────────────────────────────────── */
+function showInvReviewModal(results) {
+  _invScanResults = results;
+  const modal   = document.getElementById('invReviewModal');
+  const list    = document.getElementById('invResultsList');
+  const sub     = document.getElementById('invReviewSub');
+  const summary = document.getElementById('invReviewSummary');
+  if (!modal || !list) return;
+
+  // Update subtitle
+  if (sub) {
+    const countEl = sub.querySelector('#invReviewCount') || sub;
+    sub.innerHTML = `<span id="invReviewCount"><strong>${results.length}</strong></span> ${t('inv_items_found') || 'price change(s) detected'}`;
+  }
+
+  // Build summary line
+  if (summary) {
+    const increases = results.filter(r => r.newPrice > r.oldPrice).length;
+    const decreases = results.filter(r => r.newPrice < r.oldPrice).length;
+    const s = sym();
+    const avgChange = results.length
+      ? (results.reduce((a,r) => a + (r.newPrice - r.oldPrice), 0) / results.length).toFixed(2)
+      : 0;
+    const dir = parseFloat(avgChange) > 0 ? `+${s}${avgChange}` : `${s}${avgChange}`;
+    summary.innerHTML = `${t('inv_summary_prefix') || 'Found'} <strong>${increases}</strong> ${t('inv_summary_up')||'increases'}, <strong>${decreases}</strong> ${t('inv_summary_down')||'decreases'}. ${t('inv_summary_avg')||'Average change:'} <strong style="color:${parseFloat(avgChange)>0?'var(--danger)':'var(--lime)'}">${dir}</strong>`;
+  }
+
+  // Render result rows
+  list.innerHTML = results.map((r, i) => {
+    const s = sym();
+    const diff = r.newPrice - r.oldPrice;
+    const diffPct = r.oldPrice > 0 ? ((diff / r.oldPrice) * 100).toFixed(1) : '—';
+    const diffClass = diff > 0 ? 'up' : diff < 0 ? 'down' : 'same';
+    const diffLabel = diff > 0 ? `+${s}${Math.abs(diff).toFixed(0)} (+${diffPct}%)` :
+                      diff < 0 ? `−${s}${Math.abs(diff).toFixed(0)} (${diffPct}%)` : '=';
+    return `<div class="inv-result-row selected" id="invRow-${i}" role="listitem">
+      <label class="inv-result-name" style="display:flex;align-items:center;gap:7px;cursor:pointer">
+        <input type="checkbox" class="inv-result-check" checked
+          onchange="updateInvSelection()"
+          aria-label="Select ${esc(r.nameLoc)}"/>
+        <span title="${esc(r.name)}">${esc(r.nameLoc)}</span>
+      </label>
+      <span class="inv-result-old">${s}${r.oldPrice.toFixed(0)}</span>
+      <span class="inv-result-new">${s}${r.newPrice.toFixed(0)}</span>
+      <span class="inv-result-diff ${diffClass}">${diffLabel}</span>
+    </div>`;
+  }).join('');
+
+  // Update selection count
+  updateInvSelection();
+
+  modal.classList.add('open');
+  modal.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+}
+
+/* ─────────────────────────────────────────────────────────────
+   updateInvSelection()
+   Syncs the "N selected" counter and confirm-button label.
+   ───────────────────────────────────────────────────────────── */
+function updateInvSelection() {
+  const checks = document.querySelectorAll('.inv-result-check');
+  const selected = [...checks].filter(c => c.checked).length;
+  const selCount = document.getElementById('invSelectedCount');
+  const confirmBtn = document.getElementById('invConfirmBtn');
+  const selectAll = document.getElementById('invSelectAll');
+
+  if (selCount) selCount.textContent = `${selected} ${t('inv_selected') || 'selected'}`;
+  if (confirmBtn) {
+    confirmBtn.disabled = selected === 0;
+    confirmBtn.style.opacity = selected === 0 ? '.5' : '1';
+  }
+  // Update select-all checkbox state
+  if (selectAll) {
+    selectAll.checked = selected === checks.length;
+    selectAll.indeterminate = selected > 0 && selected < checks.length;
+  }
+  // Highlight rows
+  checks.forEach(c => {
+    c.closest('.inv-result-row')?.classList.toggle('selected', c.checked);
+  });
+}
+
+/* ─────────────────────────────────────────────────────────────
+   toggleInvSelectAll(checked)
+   Called by the select-all checkbox.
+   ───────────────────────────────────────────────────────────── */
+function toggleInvSelectAll(checked) {
+  document.querySelectorAll('.inv-result-check').forEach(c => { c.checked = checked; });
+  updateInvSelection();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   confirmInvResults()
+   Applies all selected price changes using the existing
+   price-sync infrastructure (closePriceSync cascade).
+   ───────────────────────────────────────────────────────────── */
+function confirmInvResults() {
+  const checks = [...document.querySelectorAll('.inv-result-check')];
+  const selected = checks
+    .map((c, i) => c.checked ? _invScanResults[i] : null)
+    .filter(Boolean);
+
+  if (!selected.length) return;
+
+  // Apply each price change through the existing cascade system
+  selected.forEach(item => {
+    window.DB_PRICE_SYNC?.setPriceOverride(item.name, item.newPrice);
+    // Update all saved recipes directly (no dialog — user already confirmed in modal)
+    const dishes = loadDB();
+    const key = item.name.toLowerCase().trim();
+    dishes.forEach(d => {
+      (d.ingredients||[]).forEach(ing => {
+        if ((ing.name||'').toLowerCase().trim() === key) {
+          ing.price = String(item.newPrice);
+          ing._priceUpdatedAt = new Date().toLocaleDateString();
+        }
+      });
+    });
+    saveDB(dishes);
+  });
+
+  // P/F cascade: recalculate PF dishes that use updated ingredients
+  const updatedKeys = new Set(selected.map(i => i.name.toLowerCase().trim()));
+  const dishes = loadDB();
+  dishes.forEach(pfDish => {
+    if (!pfDish.isPF) return;
+    const usesUpdated = (pfDish.ingredients||[]).some(i =>
+      updatedKeys.has((i.name||'').toLowerCase().trim())
+    );
+    if (!usesUpdated) return;
+    const newCostPerKg = calcPFCostPerKg(pfDish);
+    const pfKey = pfDish.name.toLowerCase().trim();
+    dishes.forEach(d => {
+      (d.ingredients||[]).forEach(i => {
+        if ((i.name||'').toLowerCase().trim() === pfKey && i._isPF) {
+          i.price = String(newCostPerKg);
+        }
+      });
+    });
+  });
+  saveDB(dishes);
+
+  // Save scan to history
+  _saveInvScanToHistory(selected);
+
+  // Close modal + refresh UI
+  closeInvReviewModal();
+  renderSaved();
+
+  // If market is open, refresh it
+  if (activeTab === 'market') setTimeout(renderMarket, 150);
+  if (activeTab === 'invoices') renderInvoiceHistory();
+
+  showToast(`✅ ${selected.length} ${t('inv_prices_updated') || 'price(s) updated across all recipes'}`, 'lime');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   closeInvReviewModal()
+   ───────────────────────────────────────────────────────────── */
+function closeInvReviewModal() {
+  const modal = document.getElementById('invReviewModal');
+  if (!modal) return;
+  modal.classList.remove('open');
+  modal.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  _invCurrentBase64 = null;
+  _invScanResults = [];
+}
+
+function handleInvReviewOverlayClick(e) {
+  if (e.target === document.getElementById('invReviewModal')) closeInvReviewModal();
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Scan history  —  localStorage persistence
+   ───────────────────────────────────────────────────────────── */
+function _loadInvHistory() {
+  try { return JSON.parse(localStorage.getItem(INV_STORAGE_KEY) || '[]'); }
+  catch(e) { return []; }
+}
+function _saveInvScanToHistory(items) {
+  const history = _loadInvHistory();
+  history.unshift({
+    date: new Date().toISOString(),
+    count: items.length,
+    items: items.map(i => ({ name:i.name, nameLoc:i.nameLoc, oldPrice:i.oldPrice, newPrice:i.newPrice })),
+  });
+  // Keep last 20 scans
+  try { localStorage.setItem(INV_STORAGE_KEY, JSON.stringify(history.slice(0, 20))); }
+  catch(e) {}
+}
+
+/* ─────────────────────────────────────────────────────────────
+   renderInvoiceHistory()
+   Renders the scan log in the Invoices panel.
+   Called when switching to the invoices tab.
+   ───────────────────────────────────────────────────────────── */
+function renderInvoiceHistory() {
+  const history = _loadInvHistory();
+  const list    = document.getElementById('invHistoryList');
+  const empty   = document.getElementById('invHistoryEmpty');
+  const tabBadge = document.getElementById('invoiceTabCount');
+
+  // Update stats
+  const totalScans    = history.length;
+  const totalUpdated  = history.reduce((a, h) => a + (h.count || 0), 0);
+  const lastScan      = history[0]?.date
+    ? new Date(history[0].date).toLocaleDateString()
+    : '—';
+
+  const el = (id, v) => { const e = document.getElementById(id); if (e) e.textContent = v; };
+  el('invStatScans',   totalScans);
+  el('invStatUpdated', totalUpdated);
+  el('invStatLast',    lastScan);
+
+  // Tab badge
+  if (tabBadge) {
+    tabBadge.textContent = totalScans;
+    tabBadge.style.display = totalScans > 0 ? 'inline-block' : 'none';
+  }
+
+  if (!history.length) {
+    if (list)  list.innerHTML  = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+
+  const s = sym();
+  if (list) list.innerHTML = history.map((h, i) => {
+    const date = new Date(h.date).toLocaleString(
+      currentLang === 'ua' ? 'uk-UA' : currentLang === 'ru' ? 'ru-RU' : 'en-US',
+      { day:'2-digit', month:'short', hour:'2-digit', minute:'2-digit' }
+    );
+    const preview = (h.items||[]).slice(0, 3)
+      .map(it => `${esc(it.nameLoc||it.name)}: ${s}${it.oldPrice}→${s}${it.newPrice}`)
+      .join(' · ');
+    return `<div class="inv-history-item">
+      <div class="inv-history-item-info">
+        <span class="inv-history-item-count">
+          ${h.count} ${t('inv_prices_updated_short')||'price(s) updated'}
+        </span>
+        <span class="inv-history-item-date">${date}</span>
+        ${preview ? `<span style="font-size:.72rem;color:var(--muted);margin-top:2px">${preview}</span>` : ''}
+      </div>
+      <button class="si-btn" onclick="replayInvScan(${i})" aria-label="View scan details">
+        ${t('inv_view_scan')||'View'}
+      </button>
+    </div>`;
+  }).join('');
+}
+
+/* ─────────────────────────────────────────────────────────────
+   replayInvScan(index)
+   Re-opens the review modal with data from a past scan.
+   ───────────────────────────────────────────────────────────── */
+function replayInvScan(index) {
+  const history = _loadInvHistory();
+  const scan = history[index];
+  if (!scan?.items) return;
+  showInvReviewModal(scan.items.map(i => ({
+    ...i,
+    nameLoc: i.nameLoc || i.name,
+  })));
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Compatibility aliases  (old HTML used triggerScan/closeScanModal names)
+   ───────────────────────────────────────────────────────────── */
+function triggerScan()              { triggerInvoiceScan(); }
+function closeScanModal()           { closeInvReviewModal(); }
+function closeInvReview()           { closeInvReviewModal(); }
+function confirmScanResults()       { confirmInvResults(); }
+function confirmInvoiceUpdate()     { confirmInvResults(); }
+function toggleSelectAll(v)         { toggleInvSelectAll(v); }
+function handleScanModalOverlayClick(e) { handleInvReviewOverlayClick(e); }
+
+/* ══════════════════════════════════════════════════════════════════
    INIT
    ══════════════════════════════════════════════════════════════════ */
 document.addEventListener('DOMContentLoaded',()=>{
@@ -2694,6 +3330,8 @@ document.addEventListener('DOMContentLoaded',()=>{
       closeProModal();
       closePriceSync(false);
       closeLoginModal();
+      closeInvReviewModal();
+      _hideInvProcessing();
       if(chatOpen)toggleChat();
     }
   });
