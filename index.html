@@ -182,17 +182,6 @@
                 <span data-i18n="tab_pf_library">P/F Library</span>
                 <span class="nav-tab-badge nav-tab-badge-gold" id="pfTabCount" style="display:none">0</span>
             </button>
-            <!-- Invoices / Scanner tab -->
-            <button class="nav-tab" data-tab="invoices" onclick="switchTab('invoices')" role="tab" aria-selected="false"
-                aria-controls="invoicesPanel">
-                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                    <circle cx="12" cy="13" r="4" />
-                </svg>
-                <span data-i18n="tab_invoices">Invoices</span>
-                <span class="nav-tab-badge scan-badge" data-i18n="tab_scan_badge">AI Scan</span>
-            </button>
         </div>
         <!-- Tier status pill — visible in tab bar -->
         <div class="tab-nav-right no-print" id="tierStatusRow">
@@ -528,8 +517,8 @@
     <!-- ════════════ INVOICE SCAN — HIDDEN FILE INPUT ════════════ -->
     <!-- capture="environment" opens the rear camera on mobile -->
     <input type="file" id="invoiceFileInput" accept="image/*,application/pdf" capture="environment"
-        style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none"
-        onchange="onInvoiceFileSelected(this)" aria-hidden="true" />
+        style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="handleInvoiceFile(this)"
+        aria-hidden="true" />
 
     <!-- ════════════ INVOICE PROCESSING OVERLAY ════════════════ -->
     <div id="invProcessingOverlay" class="inv-processing-overlay no-print" aria-hidden="true" aria-live="polite"
@@ -713,222 +702,117 @@
 
     </section>
 
-    <!-- ════════════ INVOICE SCANNER FAB (mobile gold button) ════════════ -->
-    <button id="scanFAB" class="scan-fab no-print" onclick="triggerInvoiceScan()" aria-label="Scan invoice"
+    <!-- ═══ SCAN FAB — mobile gold button (shown only on mobile, globally) ═══ -->
+    <button id="scanFab" class="scan-fab no-print" onclick="triggerInvoiceScan()" aria-label="Scan invoice"
         title="Scan Invoice">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
             <circle cx="12" cy="13" r="4" />
         </svg>
     </button>
 
-    <!-- ═══════════════════ INVOICE SCANNER PANEL ═══════════════════ -->
-    <section id="invoicesPanel" class="invoices-panel no-print" style="display:none" aria-label="AI Invoice Scanner"
-        role="region">
-
-        <!-- Panel header -->
-        <div class="invoices-header">
-            <div>
-                <h2 class="invoices-title">
-                    <span class="invoices-title-icon" aria-hidden="true">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path
-                                d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                            <circle cx="12" cy="13" r="4" />
-                        </svg>
-                    </span>
-                    <span data-i18n="invoices_title">AI Invoice Scanner</span>
-                    <span class="beta-chip" aria-label="Beta feature">Beta</span>
-                </h2>
-                <p class="invoices-subtitle" data-i18n="invoices_subtitle">
-                    Photograph a supplier invoice — AI extracts prices and syncs them across all recipes
-                </p>
-            </div>
-            <!-- Desktop scan button (hidden on mobile — FAB is used instead) -->
-            <button class="btn-scan-desktop no-print" id="scanBtnDesktop" onclick="triggerScan()"
-                aria-label="Scan invoice">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                    <circle cx="12" cy="13" r="4" />
+    <!-- ═══ PROCESSING OVERLAY — full-screen AI scanning animation ═══ -->
+    <div id="invProcessingOverlay" class="inv-processing-overlay no-print" aria-hidden="true" aria-live="assertive"
+        role="status">
+        <div class="inv-processing-card">
+            <div class="inv-processing-anim" aria-hidden="true">
+                <svg class="inv-doc-icon" width="48" height="60" viewBox="0 0 24 30" fill="none" stroke="currentColor"
+                    stroke-width="1.5" stroke-linecap="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v20a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                    <line x1="8" y1="13" x2="16" y2="13" />
+                    <line x1="8" y1="17" x2="16" y2="17" />
+                    <line x1="8" y1="21" x2="12" y2="21" />
                 </svg>
-                <span data-i18n="btn_scan_invoice">Scan Invoice</span>
-            </button>
-        </div>
-
-        <!-- Upload area (drag-drop on desktop / tap on mobile) -->
-        <div class="scan-upload-area" id="scanUploadArea" onclick="triggerScan()" role="button" tabindex="0"
-            aria-label="Upload or photograph invoice" onkeydown="if(event.key==='Enter'||event.key===' ')triggerScan()">
-            <div class="scan-upload-icon" aria-hidden="true">
-                <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                    stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                    <circle cx="12" cy="13" r="4" />
-                </svg>
+                <div class="inv-scan-line" aria-hidden="true"></div>
             </div>
-            <p class="scan-upload-title" data-i18n="scan_upload_title">Tap to photograph or upload invoice</p>
-            <p class="scan-upload-sub" data-i18n="scan_upload_sub">JPG, PNG, HEIC — up to 20MB. Camera recommended for
-                best results.</p>
-            <div class="scan-upload-badge">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" aria-hidden="true">
-                    <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
-                </svg>
-                <span data-i18n="scan_ai_badge">Powered by AI Vision</span>
-            </div>
-        </div>
-
-        <!-- Scan history placeholder -->
-        <div class="scan-history-section">
-            <p class="scan-history-label" data-i18n="scan_history_label">Recent Scans</p>
-            <div id="scanHistory" class="scan-history-list">
-                <p class="scan-history-empty" data-i18n="scan_history_empty">No scans yet — your scan history will
-                    appear here.</p>
-            </div>
-        </div>
-
-        <!-- Info card: how it works -->
-        <div class="scan-info-card">
-            <p class="scan-info-title" data-i18n="scan_how_title">How It Works</p>
-            <div class="scan-steps">
-                <div class="scan-step">
-                    <span class="scan-step-num">1</span>
-                    <span data-i18n="scan_step1">Photograph your supplier's invoice</span>
-                </div>
-                <div class="scan-step">
-                    <span class="scan-step-num">2</span>
-                    <span data-i18n="scan_step2">AI extracts product names and prices</span>
-                </div>
-                <div class="scan-step">
-                    <span class="scan-step-num">3</span>
-                    <span data-i18n="scan_step3">Review detected changes before applying</span>
-                </div>
-                <div class="scan-step">
-                    <span class="scan-step-num">4</span>
-                    <span data-i18n="scan_step4">Confirm to sync prices across all linked recipes</span>
-                </div>
-            </div>
-        </div>
-
-    </section>
-
-    <!-- ═══════════════════ SCAN FAB (mobile) ═══════════════════ -->
-    <button id="scanFab" class="scan-fab no-print" onclick="triggerScan()" aria-label="Scan invoice"
-        title="Scan Invoice">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-            <circle cx="12" cy="13" r="4" />
-        </svg>
-        <span class="scan-fab-label" data-i18n="fab_scan_label">Scan</span>
-    </button>
-
-    <!-- ═══════════════════ PROCESSING OVERLAY ═══════════════════ -->
-    <div id="scanProcessingOverlay" class="scan-processing-overlay" aria-hidden="true" role="dialog"
-        aria-live="assertive" aria-label="Processing invoice">
-        <div class="scan-processing-card">
-            <!-- Image preview thumbnail -->
-            <div class="scan-preview-wrap">
-                <img id="scanPreviewImg" class="scan-preview-img" src="" alt="Invoice preview" aria-hidden="true" />
-                <div class="scan-preview-shimmer" aria-hidden="true"></div>
-            </div>
-            <!-- Spinner + label -->
-            <div class="scan-spinner-wrap" aria-hidden="true">
-                <div class="scan-spinner">
-                    <div class="scan-spinner-ring"></div>
-                    <div class="scan-spinner-ring scan-spinner-ring-2"></div>
-                    <div class="scan-spinner-core">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2l2.4 7.4H22l-6.2 4.5 2.4 7.4L12 17l-6.2 4.3 2.4-7.4L2 9.4h7.6L12 2z" />
-                        </svg>
-                    </div>
-                </div>
-            </div>
-            <p class="scan-processing-title" id="scanProcessingTitle" data-i18n="scan_processing_title">AI is reading
-                your invoice…</p>
-            <p class="scan-processing-sub" data-i18n="scan_processing_sub">This takes a few seconds</p>
-            <div class="scan-processing-dots" aria-hidden="true">
+            <div class="inv-processing-dots" aria-hidden="true">
                 <span></span><span></span><span></span>
             </div>
+            <p class="inv-processing-title" data-i18n="inv_processing_title">AI is reading your invoice…</p>
+            <p class="inv-processing-sub" data-i18n="inv_processing_sub">This takes a few seconds</p>
+            <img id="invPreviewThumb" class="inv-preview-thumb" src="" alt="Invoice preview" aria-hidden="true"
+                style="display:none" />
         </div>
     </div>
 
-    <!-- ═══════════════════ REVIEW RESULTS MODAL ═══════════════════ -->
-    <div id="scanResultModal" class="modal-overlay" aria-hidden="true" onclick="handleScanModalOverlayClick(event)"
-        role="dialog" aria-modal="true" aria-labelledby="scanResultTitle">
-        <div class="scan-result-modal">
+    <!-- ═══ REVIEW MODAL — price changes bottom sheet ═══ -->
+    <div id="invReviewModal" class="modal-overlay inv-review-overlay no-print" aria-hidden="true"
+        onclick="handleInvReviewOverlayClick(event)" role="dialog" aria-modal="true" aria-labelledby="invReviewTitle">
+        <div class="inv-review-card">
 
-            <button class="modal-close" onclick="closeScanModal()" aria-label="Close">
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-                    stroke-linecap="round" aria-hidden="true">
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
-            </button>
-
-            <!-- Header -->
-            <div class="scan-result-header">
-                <div class="scan-result-icon" aria-hidden="true">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                        <polyline points="22 4 12 14.01 9 11.01" />
+            <div class="inv-review-header">
+                <div class="inv-review-header-left">
+                    <div class="inv-review-icon" aria-hidden="true">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                        </svg>
+                    </div>
+                    <div>
+                        <h2 class="inv-review-title" id="invReviewTitle" data-i18n="inv_review_title">
+                            Invoice Scan Complete
+                        </h2>
+                        <p class="inv-review-sub" id="invReviewSub" data-i18n="inv_review_sub">
+                            Review detected price changes
+                        </p>
+                    </div>
+                </div>
+                <button class="modal-close" onclick="closeInvReviewModal()" aria-label="Close">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                        stroke-linecap="round" aria-hidden="true">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
                     </svg>
-                </div>
-                <div>
-                    <h2 class="scan-result-title" id="scanResultTitle" data-i18n="scan_result_title">Invoice Scan
-                        Complete</h2>
-                    <p class="scan-result-sub" id="scanResultSub">
-                        <span id="scanResultCount">0</span>
-                        <span data-i18n="scan_result_items_found"> price change(s) detected</span>
-                    </p>
-                </div>
+                </button>
             </div>
 
-            <!-- Column header -->
-            <div class="scan-result-col-header" aria-hidden="true">
-                <span data-i18n="scan_col_product">Product</span>
-                <span data-i18n="scan_col_old">Old Price</span>
-                <span data-i18n="scan_col_new">New Price</span>
-                <span data-i18n="scan_col_diff">Change</span>
+            <!-- Summary banner -->
+            <div class="inv-review-summary" id="invReviewSummary"></div>
+
+            <!-- Column headers (desktop only) -->
+            <div class="inv-review-col-header no-print">
+                <span data-i18n="inv_col_product">Product</span>
+                <span data-i18n="inv_col_old">Old Price</span>
+                <span data-i18n="inv_col_new">New Price</span>
+                <span data-i18n="inv_col_change">Change</span>
             </div>
 
-            <!-- Results list (scrollable) -->
-            <div id="scanResultList" class="scan-result-list" role="list" aria-live="polite"></div>
+            <!-- Scrollable results list -->
+            <div id="invResultsList" class="inv-results-list" role="list" aria-live="polite"></div>
 
-            <!-- Select-all toggle -->
-            <div class="scan-result-select-row">
-                <label class="scan-select-all-label">
-                    <input type="checkbox" id="scanSelectAll" checked onchange="toggleSelectAll(this.checked)" />
-                    <span data-i18n="scan_select_all">Select all changes</span>
+            <!-- Select-all row -->
+            <div class="scan-result-select-row" style="margin-bottom:10px;flex-shrink:0">
+                <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;color:var(--soft);cursor:pointer">
+                    <input type="checkbox" id="invSelectAll" checked onchange="toggleInvSelectAll(this.checked)"
+                        aria-label="Select all changes" />
+                    <span data-i18n="inv_select_all">Select all changes</span>
                 </label>
-                <span class="scan-selected-count" id="scanSelectedCount">0 selected</span>
+                <span id="invSelectedCount" style="font-size:.75rem;color:var(--muted)">0 selected</span>
             </div>
 
             <!-- Action buttons -->
-            <div class="scan-result-actions">
-                <button class="btn-lime scan-confirm-btn" id="scanConfirmBtn" onclick="confirmScanResults()">
+            <div class="inv-review-actions">
+                <button class="btn-lime inv-confirm-btn" id="invConfirmBtn" onclick="confirmInvResults()">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
                         stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                         <polyline points="20 6 9 17 4 12" />
                     </svg>
-                    <span data-i18n="scan_confirm_btn">Confirm &amp; Update All</span>
+                    <span data-i18n="inv_confirm_btn">Confirm &amp; Update All</span>
                 </button>
-                <button class="btn-ghost scan-cancel-btn" onclick="closeScanModal()">
-                    <span data-i18n="scan_cancel_btn">Cancel</span>
+                <button class="btn-ghost" onclick="closeInvReviewModal()">
+                    <span data-i18n="inv_cancel_btn">Cancel</span>
                 </button>
             </div>
 
-            <p class="scan-disclaimer" data-i18n="scan_disclaimer">
+            <p class="inv-review-disclaimer" data-i18n="inv_disclaimer">
                 AI extraction may contain errors. Always verify prices before confirming.
             </p>
         </div>
     </div>
 
-    <!-- Hidden file input — triggers camera / file picker -->
+    <!-- Hidden file input — triggers camera or file picker -->
     <input type="file" id="invoiceFileInput" accept="image/*" capture="environment" style="display:none"
         aria-hidden="true" onchange="handleInvoiceFile(this)" />
 
