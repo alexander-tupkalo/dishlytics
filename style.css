@@ -3105,8 +3105,9 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 12px;
+    /* reduced */
     flex-wrap: wrap;
 }
 
@@ -3170,9 +3171,9 @@ body {
 /* Stats bar */
 .pf-stats-bar {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 }
 
 .pf-stat {
@@ -3567,24 +3568,33 @@ body {
 /* ── Scanner FAB (mobile gold button) ── */
 .scan-fab {
     position: fixed;
-    /* sits to the LEFT of the AI chat FAB */
-    bottom: max(20px, env(safe-area-inset-bottom, 20px));
-    right: 84px;
-    /* 20px margin + 56px AI FAB + 8px gap */
-    z-index: 300;
-    width: 56px;
-    height: 56px;
+    /*
+    Stacked ABOVE the green AI button:
+      AI btn:   bottom:20px  height:56px  → top edge at 76px
+      gap:      15px
+      scan-fab: bottom: 76px + 15px = 91px
+  */
+    bottom: max(91px, calc(env(safe-area-inset-bottom, 0px) + 91px));
+    right: 20px;
+    /* same column as AI button */
+    z-index: 301;
+    /* one layer above AI btn */
+    width: 52px;
+    height: 52px;
     border-radius: 50%;
     border: none;
     cursor: pointer;
-    display: flex;
+    display: none;
+    /* hidden by default — JS shows/hides per tab */
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, var(--gold), var(--gold-d));
+    background: linear-gradient(135deg, var(--gold-d), var(--gold));
     color: #fff;
-    box-shadow: 0 6px 24px rgba(245, 158, 11, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 22px rgba(245, 158, 11, 0.45), 0 2px 8px rgba(0, 0, 0, 0.3);
     transition: transform .2s, box-shadow .2s, opacity .2s;
     outline: none;
+    flex-direction: column;
+    gap: 2px;
 }
 
 .scan-fab:hover {
@@ -3663,8 +3673,9 @@ body {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 12px;
+    margin-bottom: 12px;
+    /* reduced from 20px */
     flex-wrap: wrap;
 }
 
@@ -3701,9 +3712,10 @@ body {
 /* Stats bar */
 .inv-stats-bar {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 22px;
+    margin-bottom: 14px;
+    /* reduced */
 }
 
 .inv-stat {
@@ -3735,9 +3747,10 @@ body {
 /* How it works */
 .inv-how-it-works {
     display: flex;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
-    margin-bottom: 24px;
+    margin-bottom: 16px;
+    /* reduced */
 }
 
 @media(max-width:599px) {
@@ -4717,29 +4730,7 @@ select,
 }
 
 /* ═══ SCAN FAB (gold, mobile only) ════════════════════════════ */
-.scan-fab {
-    position: fixed;
-    bottom: max(86px, calc(env(safe-area-inset-bottom, 0px) + 86px));
-    /* Sits left of the AI FAB */
-    right: 84px;
-    z-index: 300;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 2px;
-    background: linear-gradient(135deg, #b45309, #f59e0b);
-    color: #fff;
-    box-shadow: 0 5px 20px rgba(245, 158, 11, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3);
-    transition: transform .18s, box-shadow .18s;
-    outline: none;
-}
-
+/* duplicate scan-fab removed */
 .scan-fab:hover {
     transform: scale(1.08);
     box-shadow: 0 9px 28px rgba(245, 158, 11, 0.6);
@@ -4760,11 +4751,6 @@ select,
 
 /* Hide FAB when not on invoices panel (show always so user can quick-scan from any tab) */
 /* Shown on mobile; hidden on wide screens where the panel button is visible */
-@media(min-width:640px) {
-    .scan-fab {
-        display: none;
-    }
-}
 
 /* ═══ PROCESSING OVERLAY ══════════════════════════════════════ */
 .scan-processing-overlay {
