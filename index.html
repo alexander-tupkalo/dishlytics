@@ -6,12 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="theme-color" content="#0F172A" />
+    <meta name="theme-color" content="#F9FAFB" />
     <title>Dishlytics • Smart Dish Analyzer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-        href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap"
         rel="stylesheet" />
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -19,11 +19,15 @@
             theme: {
                 extend: {
                     colors: {
-                        lime: '#2ECC71', 'lime-d': '#27AE60',
-                        night: '#0F172A', card: '#1E293B', 'card-hi': '#253347',
-                        gold: '#F59E0B', 'gold-d': '#D97706',
+                        lime: '#065F46', 'lime-d': '#064E3B',
+                        night: '#F9FAFB', card: '#FFFFFF', 'card-hi': '#F1F5F9',
+                        gold: '#B45309', 'gold-d': '#92400E',
                     },
-                    fontFamily: { display: ['Syne', 'sans-serif'], body: ['DM Sans', 'sans-serif'] },
+                    fontFamily: {
+                        display: ['Syne', 'sans-serif'],
+                        body: ['DM Sans', 'sans-serif'],
+                        mono: ['DM Mono', 'ui-monospace', 'monospace'],
+                    },
                 },
             },
         };
@@ -31,7 +35,7 @@
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body class="font-body bg-night text-slate-200 min-h-screen">
+<body class="font-body bg-slate-50 text-slate-900 min-h-screen">
 
     <!-- ═══════════════════════ TOPBAR ═══════════════════════ -->
     <header id="topbar" class="topbar no-print">
