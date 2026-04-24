@@ -756,14 +756,24 @@ body {
 }
 
 .ing-row-mobile {
-    background: var(--card-hi);
-    border: 1.5px solid var(--border);
-    border-radius: var(--r-md);
-    padding: 12px;
-    margin-bottom: 8px;
+    background: var(--card);
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    padding: 9px 4px;
+    margin-bottom: 0;
     display: none;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+}
+
+.ing-row-mobile:first-of-type {
+    border-top: 1px solid var(--border);
+}
+
+.ing-row-mobile:last-of-type {
+    border-bottom: 1.5px solid var(--border);
+    margin-bottom: 6px;
 }
 
 .ing-row-mobile:last-of-type {
@@ -791,13 +801,13 @@ body {
 .mob-row-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 8px;
+    gap: 5px;
 }
 
 .mob-row-grid-3 {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 8px;
+    gap: 5px;
 }
 
 .mob-field-label {
@@ -1234,12 +1244,13 @@ body {
     font-family: 'Syne', sans-serif;
     font-weight: 800;
     font-size: .6rem;
-    background: rgba(245, 158, 11, 0.15);
-    border: 1px solid var(--gold-border);
-    color: var(--gold);
-    padding: 1px 5px;
-    border-radius: 4px;
+    background: var(--gold-faint);
+    border: 1.5px solid var(--gold-d);
+    color: var(--gold-d);
+    padding: 2px 7px;
+    border-radius: 5px;
     letter-spacing: .04em;
+    text-transform: uppercase;
 }
 
 .saved-item-cost {
@@ -1378,8 +1389,8 @@ body {
 }
 
 .ai-float-btn.voice-active {
-    background: linear-gradient(135deg, #dc2626, #b91c1c) !important;
-    box-shadow: 0 6px 24px rgba(239, 68, 68, 0.5) !important;
+    background: linear-gradient(135deg, #059669, #065F46) !important;
+    box-shadow: 0 6px 24px rgba(5, 150, 105, 0.45) !important;
     animation: none !important;
 }
 
@@ -2332,17 +2343,22 @@ body {
 
 /* P/F saved-item variant */
 .saved-item-pf {
-    border-color: rgba(245, 158, 11, 0.18);
-    background: rgba(245, 158, 11, 0.03);
+    background: var(--gold-faint);
+    /* amber-50 equivalent */
+    border-color: var(--gold);
+    border-left: 3px solid var(--gold-d);
+    /* strong left accent */
 }
 
 .saved-item-pf:hover {
-    border-color: rgba(245, 158, 11, 0.38);
-    background: rgba(245, 158, 11, 0.07);
+    background: #FEF3C7;
+    /* amber-100 */
+    border-color: var(--gold-d);
 }
 
 .saved-item-cost-pf {
-    color: var(--gold) !important;
+    color: var(--gold-d) !important;
+    font-weight: 800;
 }
 
 .saved-cost-unit {
@@ -4495,9 +4511,9 @@ body {
     /* Inputs in mobile card — ensure touch target */
     .ing-row-mobile .ing-input,
     .ing-row-mobile .unit-sel {
-        min-height: 44px;
-        font-size: .9rem;
-        padding: 10px 10px;
+        min-height: 40px;
+        font-size: .85rem;
+        padding: 7px 9px;
     }
 
     .ing-row-mobile .dl-input {
@@ -5352,8 +5368,9 @@ select,
     width: 7px;
     height: 7px;
     border-radius: 50%;
-    background: #EF4444;
-    border: 1.5px solid var(--night);
+    background: #059669;
+    /* emerald instead of red */
+    border: 1.5px solid var(--card);
     display: none;
     animation: micPulse 1s ease infinite;
 }
@@ -5374,9 +5391,10 @@ select,
 
 /* ── Active recording state ── */
 .ai-mic-btn.recording {
-    color: #EF4444;
-    background: rgba(239, 68, 68, 0.1);
-    animation: micGlow .8s ease infinite;
+    color: #059669;
+    /* emerald-600 */
+    background: rgba(5, 150, 105, 0.1);
+    animation: micPulseEmerald 1.2s ease infinite;
 }
 
 .ai-mic-btn.recording .mic-recording-dot {
@@ -5406,6 +5424,21 @@ select,
     }
 }
 
+/* Emerald pulse for active listening state */
+@keyframes micPulseEmerald {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 0 rgba(5, 150, 105, 0);
+        color: #059669;
+    }
+
+    50% {
+        box-shadow: 0 0 0 6px rgba(5, 150, 105, 0.18);
+        color: #065F46;
+    }
+}
+
 /* ── Voice bar — full-width indicator shown while listening ── */
 .voice-bar {
     display: none;
@@ -5413,8 +5446,9 @@ select,
     align-items: center;
     gap: 7px;
     padding: 7px 12px;
-    background: rgba(239, 68, 68, 0.07);
-    border: 1px solid rgba(239, 68, 68, 0.22);
+    background: rgba(5, 150, 105, 0.06);
+    /* emerald tint */
+    border: 1px solid rgba(5, 150, 105, 0.22);
     border-radius: var(--r-md);
     flex-shrink: 0;
     width: 100%;
@@ -5465,7 +5499,7 @@ select,
 /* Sound wave bars */
 .voice-wave {
     width: 3px;
-    background: rgba(239, 68, 68, 0.55);
+    background: rgba(5, 150, 105, 0.55);
     border-radius: 99px;
     flex-shrink: 0;
     animation: voiceWave .7s ease infinite;
@@ -5505,7 +5539,8 @@ select,
     font-family: 'Syne', sans-serif;
     font-size: .72rem;
     font-weight: 700;
-    color: #EF4444;
+    color: #059669;
+    /* emerald */
     letter-spacing: .04em;
     flex: 1;
     white-space: nowrap;
@@ -5525,9 +5560,9 @@ select,
     width: 22px;
     height: 22px;
     border-radius: 5px;
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid rgba(239, 68, 68, 0.3);
-    color: #EF4444;
+    background: rgba(5, 150, 105, 0.1);
+    border: 1px solid rgba(5, 150, 105, 0.3);
+    color: #059669;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -5538,13 +5573,13 @@ select,
 }
 
 .voice-stop-btn:hover {
-    background: rgba(239, 68, 68, 0.28);
+    background: rgba(5, 150, 105, 0.2);
 }
 
 /* ── Transcript preview inside input while listening ── */
 .ai-chat-input.listening {
-    border-color: rgba(239, 68, 68, 0.4) !important;
-    background: rgba(239, 68, 68, 0.04) !important;
+    border-color: rgba(5, 150, 105, 0.5) !important;
+    background: rgba(5, 150, 105, 0.04) !important;
     color: var(--text) !important;
 }
 
@@ -5807,13 +5842,22 @@ a,
     font-variant-numeric: tabular-nums;
 }
 
-/* ── Zebra-striping on desktop ingredient table rows ── */
-#ingredientsDiv .ing-row-desktop:nth-child(4n+1) {
-    background: var(--card-hi);
+/* ── Zebra-striping: every other pair of rows (desktop+mobile mirror each other) ── */
+#ingredientsDiv .ing-row-desktop:nth-child(4n+1),
+#ingredientsDiv .ing-row-desktop:nth-child(4n+2) {
+    background: #F8FAFC;
+    /* slate-50: barely-there stripe */
 }
 
-#ingredientsDiv .ing-row-desktop:nth-child(4n+3) {
+#ingredientsDiv .ing-row-desktop:nth-child(4n+3),
+#ingredientsDiv .ing-row-desktop:nth-child(4n+4) {
     background: var(--card);
+}
+
+/* Mobile: alternate card backgrounds */
+#ingredientsDiv .ing-row-mobile:nth-of-type(4n+1),
+#ingredientsDiv .ing-row-mobile:nth-of-type(4n+2) {
+    background: #F8FAFC;
 }
 
 /* ── Elegant thin borders instead of heavy shadows on modals ── */
@@ -5886,6 +5930,96 @@ select:focus-visible {
 }
 
 /* ── Print on light theme — almost no changes needed ── */
+
+/* ═══════════════════════════════════════════════════════════════
+   WASTE % PRESET CHIPS
+   ═══════════════════════════════════════════════════════════════ */
+.waste-field-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    width: 100%;
+}
+
+.waste-presets {
+    display: flex;
+    gap: 3px;
+    flex-wrap: nowrap;
+}
+
+.waste-preset {
+    flex: 1;
+    font-family: 'Syne', sans-serif;
+    font-size: .58rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    padding: 2px 0;
+    min-height: 22px;
+    /* compact — not a touch target itself */
+    border: 1px solid var(--border-md);
+    border-radius: 4px;
+    background: var(--card-hi);
+    color: var(--muted);
+    cursor: pointer;
+    transition: background .15s, border-color .15s, color .15s;
+    line-height: 1;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    white-space: nowrap;
+    text-align: center;
+}
+
+.waste-preset:hover,
+.waste-preset:active {
+    background: var(--card-hi2);
+    border-color: var(--border-md);
+    color: var(--soft);
+}
+
+.waste-preset.active {
+    background: var(--lime-faint);
+    border-color: var(--lime-d);
+    color: var(--lime-d);
+}
+
+/* Desktop table: keep column width sane — hide preset row in tight columns */
+.ing-row-desktop .waste-presets {
+    display: none;
+    /* desktop uses the column header label; presets shown on hover */
+}
+
+.ing-row-desktop .waste-field-wrap:hover .waste-presets,
+.ing-row-desktop .waste-field-wrap:focus-within .waste-presets {
+    display: flex;
+    position: absolute;
+    z-index: 20;
+    background: var(--card);
+    border: 1.5px solid var(--border-md);
+    border-radius: 6px;
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    top: calc(100% + 3px);
+    left: 0;
+    min-width: 140px;
+    gap: 4px;
+}
+
+.ing-row-desktop .waste-field-wrap {
+    position: relative;
+}
+
+/* Mobile: always visible below the input */
+@media(max-width:699px) {
+    .ing-row-mobile .waste-presets {
+        display: flex;
+    }
+
+    .waste-preset {
+        min-height: 26px;
+        font-size: .62rem;
+    }
+}
+
 @media print {
     body {
         background: #fff !important;

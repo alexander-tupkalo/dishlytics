@@ -1092,7 +1092,12 @@ function addIngredient(data={}){
   const lastUpStr = lastUp?new Date(lastUp).toLocaleDateString():'';
   const priceF=()=>`<div class="price-field-wrap"><input class="ing-input" type="number" min="0" step="0.01" id="iPrice-${id}" placeholder="${esc(t('ph_price'))}" data-i18n-ph="ph_price" value="${esc(resolvedPrice)}" oninput="calculate()" onchange="onPriceChange(this,${id})" data-field="price"/><span class="price-updated-at" id="iUpdated-${id}">${lastUpStr?t('price_updated_label')+' '+lastUpStr:''}</span></div>`;
 
-  const wasteF=()=>`<input class="ing-input" type="number" min="0" max="99" step="0.1" id="iWaste-${id}" placeholder="${esc(t('ph_waste'))}" data-i18n-ph="ph_waste" value="${data.waste!==undefined?esc(data.waste):''}" oninput="calculate()" data-field="waste"/>`;
+  const wasteF=()=>{
+    const _wv=data.waste!==undefined?esc(data.waste):'';
+    const _wpresets=[{k:'0',pct:0},{k:'Veg',pct:20},{k:'Meat',pct:15},{k:'Fish',pct:30}];
+    const _chips=_wpresets.map(p=>`<button type="button" class="waste-preset" onclick="setWaste(${id},${p.pct})" title="${p.k} ~${p.pct}%" aria-label="${p.k} ${p.pct}%">${p.k}</button>`).join('');
+    return `<div class="waste-field-wrap"><input class="ing-input" type="number" min="0" max="99" step="0.1" id="iWaste-${id}" placeholder="${esc(t('ph_waste'))}" data-i18n-ph="ph_waste" value="${_wv}" oninput="calculate()" data-field="waste"/><div class="waste-presets">${_chips}</div></div>`;
+  };
 
   // Supplier chip
   const sup=data.supplier||'';
@@ -1471,6 +1476,21 @@ function closePriceSync(doSync) {
 /* ══════════════════════════════════════════════════════════════════
    CALCULATE
    ══════════════════════════════════════════════════════════════════ */
+/** Fill waste % for a row and recalculate */
+function setWaste(id, pct){
+  const el = document.getElementById('iWaste-'+id);
+  if(!el) return;
+  el.value = pct;
+  // Highlight active preset
+  const wrap = el.closest('.waste-field-wrap');
+  if(wrap){
+    wrap.querySelectorAll('.waste-preset').forEach(btn=>{
+      btn.classList.toggle('active', parseFloat(btn.title.split('~')[1]) === pct);
+    });
+  }
+  calculate();
+}
+
 function calculate(){
   const output=Math.max(1,parseFloat(document.getElementById('outputWeight')?.value)||1);
   const servings=Math.max(1,parseInt(document.getElementById('servings')?.value)||1);
