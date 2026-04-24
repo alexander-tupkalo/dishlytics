@@ -1083,8 +1083,8 @@ function addIngredient(data={}){
     ? String(window.DB_PRICE_SYNC.getEffectivePrice(data.name,''))
     : '');
 
-  const nameF=(cls='')=>`<div class="autocomplete-wrap ${cls}" id="acWrap-${id}"><input class="ing-input" type="text" id="iName-${id}" placeholder="${esc(t('ph_name'))}" data-i18n-ph="ph_name" value="${esc(data.name||'')}" oninput="onIngName(this,${id})" onblur="hideAC(${id})" autocomplete="off" data-field="name"/><div class="autocomplete-list" id="ac-${id}"></div></div>`;
-  const amtF=()=>`<input class="ing-input" type="number" min="0" step="0.01" id="iAmt-${id}" placeholder="${esc(t('ph_amount'))}" data-i18n-ph="ph_amount" value="${esc(data.amount||'')}" oninput="calculate()" data-field="amount"/>`;
+  const nameF=(cls='')=>`<div class="autocomplete-wrap ${cls}" id="acWrap-${id}"><input class="ing-input" type="text" id="iName-${id}" placeholder="${esc(t('ph_name'))}" data-i18n-ph="ph_name" value="${esc(data.name||'')}" oninput="onIngName(this,${id})" onkeyup="onIngName(this,${id})" onblur="hideAC(${id})" autocomplete="off" data-field="name"/><div class="autocomplete-list" id="ac-${id}"></div></div>`;
+  const amtF=()=>`<input class="ing-input" type="number" min="0" step="0.01" id="iAmt-${id}" placeholder="${esc(t('ph_amount'))}" data-i18n-ph="ph_amount" value="${esc(data.amount||'')}" oninput="calculate()" onchange="calculate()" data-field="amount"/>`;
   const unitF=(u=data.unit||'g')=>`<select class="unit-sel" id="iUnit-${id}" onchange="calculate()" data-field="unit"><option value="g" ${u==='g'?'selected':''}>${t('unit_g')}</option><option value="kg" ${u==='kg'?'selected':''}>${t('unit_kg')}</option><option value="ml" ${u==='ml'?'selected':''}>${t('unit_ml')}</option><option value="l" ${u==='l'?'selected':''}>${t('unit_l')}</option></select>`;
 
   // Price with last-updated label
@@ -1096,7 +1096,7 @@ function addIngredient(data={}){
     const _wv=data.waste!==undefined?esc(data.waste):'';
     const _wpresets=[{k:'0',pct:0},{k:'Veg',pct:20},{k:'Meat',pct:15},{k:'Fish',pct:30}];
     const _chips=_wpresets.map(p=>`<button type="button" class="waste-preset" onclick="setWaste(${id},${p.pct})" title="${p.k} ~${p.pct}%" aria-label="${p.k} ${p.pct}%">${p.k}</button>`).join('');
-    return `<div class="waste-field-wrap"><input class="ing-input" type="number" min="0" max="99" step="0.1" id="iWaste-${id}" placeholder="${esc(t('ph_waste'))}" data-i18n-ph="ph_waste" value="${_wv}" oninput="calculate()" data-field="waste"/><div class="waste-presets">${_chips}</div></div>`;
+    return `<div class="waste-field-wrap"><input class="ing-input" type="number" min="0" max="99" step="0.1" id="iWaste-${id}" placeholder="${esc(t('ph_waste'))}" data-i18n-ph="ph_waste" value="${_wv}" oninput="calculate()" onchange="calculate()" data-field="waste"/><div class="waste-presets">${_chips}</div></div>`;
   };
 
   // Supplier chip
@@ -1238,7 +1238,9 @@ function onIngName(input,id){
     const supBadge=sup&&!item._isPF
       ?`<span class="ac-supplier-badge" style="color:${supColor};background:${supColor}15;border:1px solid ${supColor}30">${esc(sup)}</span>`
       :'';
-    return `<div class="ac-item" onmousedown="applyAC(${id},'${esc(name)}',${effectivePrice},'${item.unit||'kg'}',${item.waste_pct||0},'${esc(sup)}','${cat}',${item._isPF?'true':'false'})">
+    return `<div class="ac-item"
+      onmousedown="applyAC(${id},'${esc(name)}',${effectivePrice},'${item.unit||'kg'}',${item.waste_pct||0},'${esc(sup)}','${cat}',${item._isPF?'true':'false'})"
+      ontouchend="event.preventDefault();applyAC(${id},'${esc(name)}',${effectivePrice},'${item.unit||'kg'}',${item.waste_pct||0},'${esc(sup)}','${cat}',${item._isPF?'true':'false'})">
       <div class="ac-item-top">
         <span class="ac-cat-dot" style="background:${catDotColor}" title="${cat}"></span>
         <span class="ac-item-name">${esc(name)}</span>
@@ -1309,7 +1311,11 @@ function applyAC(id,name,price,unit,waste,supplier,category,isPF){
   calculate();
   setTimeout(()=>document.getElementById('iAmt-'+id)?.focus(),30);
 }
-function hideAC(id){setTimeout(()=>document.querySelectorAll(`#ac-${id}`).forEach(l=>l.classList.remove('open')),200)}
+function hideAC(id){
+  // 300ms gives ontouchstart time to fire applyAC before the list closes
+  // on slow Android devices. Desktop mousedown fires before blur so no impact.
+  setTimeout(()=>document.querySelectorAll(`#ac-${id}`).forEach(l=>l.classList.remove('open')),400); // 400ms: extra headroom for touchend on slow Android
+}
 
 /* ══════════════════════════════════════════════════════════════════
    GLOBAL PRICE SYNC
@@ -3475,6 +3481,40 @@ function confirmInvoiceUpdate()     { confirmInvResults(); }
 function toggleSelectAll(v)         { toggleInvSelectAll(v); }
 function handleScanModalOverlayClick(e) { handleInvReviewOverlayClick(e); }
 
+
+/* ── Mobile event delegation for ingredient div ── */
+function _initMobileIngredientEvents() {
+  const container = document.getElementById('ingredientsDiv');
+  if (!container) return;
+
+  // Delegate touchstart on autocomplete items so iOS doesn't need 300ms tap delay
+  container.addEventListener('touchstart', function(e) {
+    const acItem = e.target.closest('.ac-item');
+    if (acItem) {
+      e.preventDefault(); // prevent ghost click + blur race
+      acItem.click();
+    }
+
+    // Waste preset chips: ensure they work on every mobile browser
+    const preset = e.target.closest('.waste-preset');
+    if (preset) {
+      e.preventDefault();
+      preset.click();
+    }
+  }, {passive: false});
+
+  // Ensure calculate() fires when Android numeric keyboard commits value
+  container.addEventListener('change', function(e) {
+    const el = e.target;
+    if (el.matches('.ing-input[type="number"]')) {
+      calculate();
+    }
+    if (el.matches('.unit-sel')) {
+      calculate();
+    }
+  });
+}
+
 /* ══════════════════════════════════════════════════════════════════
    INIT
    ══════════════════════════════════════════════════════════════════ */
@@ -3495,6 +3535,7 @@ document.addEventListener('DOMContentLoaded',()=>{
 
   addIngredient();addIngredient();
   initVoice();
+  _initMobileIngredientEvents();
   restoreAuthSession();  // restore login state from localStorage / Supabase
   setLang(saved);
   applyTierUI();         // apply tier visuals after lang sets string tokens
@@ -3541,7 +3582,7 @@ document.addEventListener('DOMContentLoaded',()=>{
       }
     };
 
-    window.visualViewport.addEventListener('resize',  repositionChat);
+    window.visualViewport.addEventListener('resize',  repositionChat, {passive:true});
     window.visualViewport.addEventListener('scroll',  repositionChat);
   }
 

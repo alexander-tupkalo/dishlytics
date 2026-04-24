@@ -583,6 +583,8 @@ body {
     -webkit-appearance: none;
     appearance: none;
     min-height: var(--touch);
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .dl-input:focus {
@@ -851,6 +853,8 @@ body {
     min-height: var(--touch);
     -webkit-appearance: none;
     font-variant-numeric: tabular-nums;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .ing-input:focus {
@@ -885,6 +889,8 @@ body {
     cursor: pointer;
     transition: var(--transition);
     -webkit-appearance: none;
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg width='8' height='5' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%2364748B' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
@@ -6017,6 +6023,109 @@ select:focus-visible {
     .waste-preset {
         min-height: 26px;
         font-size: .62rem;
+    }
+}
+
+
+/* ── Prevent iOS Safari auto-zoom on input focus (font-size must be ≥16px) ── */
+@media(max-width:699px) {
+
+    .ing-input,
+    .unit-sel,
+    .dl-input,
+    .dl-select,
+    .market-search-input,
+    .pf-search-input,
+    .market-price-input {
+        font-size: max(16px, .85rem);
+        touch-action: manipulation;
+    }
+}
+
+
+/* ═══════════════════════════════════════════════════════════════
+   MOBILE EVENT HANDLING FIXES
+   — touch-action: manipulation removes the 300ms iOS tap delay
+   — user-select: none on buttons prevents accidental text selection
+   ═══════════════════════════════════════════════════════════════ */
+
+/* All tappable elements: remove 300ms delay on iOS */
+input,
+select,
+textarea,
+button,
+[role="button"],
+label[for],
+.nav-tab,
+.ac-item,
+.saved-item,
+.mp,
+.waste-preset,
+.ai-quick-btn,
+.lb,
+.pf-action-btn,
+.scan-fab,
+.ai-float-btn {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Inputs: prevent user-zoom on focus (iOS zooms if font-size < 16px) */
+input[type="text"],
+input[type="number"],
+input[type="email"],
+select {
+    font-size: max(16px, .85rem) !important;
+}
+
+@media(min-width:700px) {
+
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    select {
+        font-size: .85rem !important;
+        /* restore on desktop */
+    }
+}
+
+/* Autocomplete list items: ensure full-height tap target on touch */
+.ac-item {
+    /* min 44px height so finger never misses on mobile */
+    min-height: 44px;
+    cursor: pointer;
+    /* Prevent text from being selected during fast tap */
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+/* Prevent scroll from stealing touch events inside the AC list */
+.autocomplete-list {
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Ingredient inputs inside rows: ensure nothing clips the tap area */
+.ing-input,
+.unit-sel {
+    -webkit-appearance: none;
+    appearance: none;
+    /* Prevent iOS from treating double-tap as zoom inside table */
+    touch-action: manipulation;
+}
+
+/* Mobile row — ensure the whole cell is tappable */
+@media(max-width:699px) {
+
+    .mob-row-grid>div,
+    .mob-row-grid-3>div {
+        /* padding gives finger room around the input */
+        padding: 2px 0;
+    }
+
+    /* Waste field wrap: stretch full width in its grid cell */
+    .waste-field-wrap {
+        width: 100%;
     }
 }
 
